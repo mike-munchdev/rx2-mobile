@@ -15,12 +15,12 @@ export default StyleSheet.create({
     alignItems: 'center',
   },
   footer: {
-    flex: 1,
+    flex: 2,
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingVertical: 50,
     paddingHorizontal: 30,
+    paddingVertical: 30,
   },
   logo: {
     height: logoHeight,
@@ -37,7 +37,7 @@ export default StyleSheet.create({
   },
   button: {
     alignItems: 'flex-end',
-    marginTop: 30,
+    marginTop: 0,
   },
   signIn: {
     width: 150,

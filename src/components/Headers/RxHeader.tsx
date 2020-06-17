@@ -1,32 +1,36 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import { IconButton } from 'react-native-paper';
-import { LinearGradient } from 'expo-linear-gradient';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import styles from './styles';
 
 import { useNavigation } from '@react-navigation/native';
-import { useIsFirstRouteInParent } from '../../hooks/navigation';
+
 
 import colors from '../../constants/colors';
+import { AuthContext } from '../../config/context';
 
 const RxHeader = () => {
+  const { signOut } = useContext(AuthContext)
   const navigation = useNavigation();
-  const isFirstRoute = useIsFirstRouteInParent();
 
   return (
     <View style={styles.header}>
       <View style={styles.headerLeft}>
-        {false && (
-          <TouchableOpacity style={styles.leftIcon}>
-            <AntDesign
-              name="shoppingcart"
-              color={colors.white.normal}
-              size={25}
-            />
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          style={styles.leftIcon}
+          onPress={() => navigation.openDrawer()}
+        >
+          <FontAwesome name="bars" color={colors.white.normal} size={25} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.leftIcon}
+          onPress={async () => {
+            await signOut();
+          }}
+        >
+          <FontAwesome name="logout" color={colors.white.normal} size={25} />
+        </TouchableOpacity>
       </View>
 
       <View style={styles.headerCenter}>
@@ -34,8 +38,8 @@ const RxHeader = () => {
       </View>
       <View style={styles.headerRight}>
         <TouchableOpacity style={styles.rightIcon}>
-          <AntDesign
-            name="shoppingcart"
+          <FontAwesome
+            name="shopping-cart"
             color={colors.white.normal}
             size={25}
           />

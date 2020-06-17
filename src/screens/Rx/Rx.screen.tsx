@@ -9,8 +9,23 @@ import styles from './styles';
 import colors from '../../constants/colors';
 import { RxHeader } from '../../components/Headers';
 import { RxHistory } from '../../components/RxHistory';
+import { useLoggedIn, useCustomerInfo } from '../../hooks/customerInfo';
+
 
 const Rx = () => {
+  const [customerInfo, setCustomerInfo] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  useEffect(() => {
+    (async () => {
+      const customerInfo = await useCustomerInfo();
+      const isLoggedIn = await useLoggedIn();
+
+      setCustomerInfo(customerInfo);
+      setIsLoggedIn(Boolean(isLoggedIn));
+    })();
+  }, []);
+  
   return (
     <View style={styles.container}>
       <RxHeader />

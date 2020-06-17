@@ -26,52 +26,29 @@ export default StyleSheet.create({
     height: logoHeight,
     width: logoHeight,
   },
-  textHeader: {
-    color: colors.white.normal,
+  title: {
+    color: colors.blue.dark,
     fontWeight: 'bold',
-    fontSize: 30,
+    fontSize: 24,
   },
-  textFooter: {
-    color: colors.blue.dark,
-    fontSize: 18,
-  },
-  action: {
-    flexDirection: 'row',
-    marginTop: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.white.off,
-    paddingBottom: 5,
-  },
-  textInput: {
-    flex: 1,
-    paddingLeft: 10,
-    color: colors.blue.dark,
-  },
-  forgotText: { color: colors.blue.light, marginTop: 15 },
-  buttons: {
-    alignItems: 'center',
-    marginTop: 25,
+  subTitle: {
+    color: colors.gray.normal,
+    marginTop: 5,
   },
   button: {
-    width: '100%',
+    alignItems: 'flex-end',
+    marginTop: 0,
   },
   signIn: {
-    width: '100%',
-    height: 50,
+    width: 150,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 10,
+    borderRadius: 20,
+    flexDirection: 'row',
   },
   textSign: {
-    fontSize: 18,
+    color: colors.white.normal,
     fontWeight: 'bold',
-  },
-  textPrivate: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 20,
-  },
-  textPrivateColor: {
-    color: colors.gray.normal,
   },
 });

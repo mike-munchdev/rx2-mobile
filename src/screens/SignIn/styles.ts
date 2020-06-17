@@ -9,17 +9,17 @@ export default StyleSheet.create({
     backgroundColor: colors.blue.dark,
   },
   header: {
-    flex: 2,
+    flex: 3,
     justifyContent: 'center',
     alignItems: 'center',
   },
   footer: {
-    flex: 2,
+    flex: 4,
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingHorizontal: 20,
-    paddingVertical: 30,
+    paddingHorizontal: 30,
+    paddingVertical: 50,
   },
   logo: {
     height: logoHeight,
@@ -46,7 +46,6 @@ export default StyleSheet.create({
     paddingLeft: 10,
     color: colors.blue.dark,
   },
-
   buttons: {
     alignItems: 'center',
     marginTop: 50,
@@ -65,4 +64,5 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  forgotText: {},
 });

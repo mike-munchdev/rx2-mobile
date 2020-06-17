@@ -1,101 +1,183 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Text, View, TextInput, TouchableOpacity } from 'react-native';
-import { FontAwesome, Feather } from '@expo/vector-icons';
-import styles from './styles';
-import colors from '../../constants/colors';
+import React, { useState, useContext, Fragment, useEffect, FC } from 'react';
+import {
+  Text,
+  View,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
+import { useLazyQuery } from '@apollo/react-hooks';
+import { ApolloError } from 'apollo-client';
+import { Formik } from 'formik';
 
-const SignIn = () => {
-  const [checkTextInputChange, setCheckTextInputChange] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
+import {
+  GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD,
+  getCustomerTokenByEmailAndPasswordCompleted,
+  getCustomerTokenByEmailAndPasswordError,
+} from '../../graphql/queries/tokens';
+import styles from './styles';
+import colors from '../../constants/colors';
+
+import { signinSchema } from '../../validation/signin';
+import { useCustomerInfo, useLoggedIn } from '../../hooks/customerInfo';
+import { DismissKeyboard } from '../../components/TextInput';
+import AnimatableTextInput from '../../components/TextInput/AnimatableTextInput';
+import { AuthContext } from '../../config/context';
+
+const SignIn: FC = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { signIn } = useContext(AuthContext);
+
   const navigation = useNavigation();
-  const textInputChange = (value: string) => {
-    setCheckTextInputChange(value.length !== 0);
-    setEmail(value);
-  };
+
+  useEffect(() => {
+    (async () => {
+      const isLoggedIn = await useLoggedIn();
+      setIsLoggedIn(Boolean(isLoggedIn));
+    })();
+  }, []);
+
+  const [getCustomerTokenByEmailAndPassword, { loading }] = useLazyQuery(
+    GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD,
+    {
+      fetchPolicy: 'network-only',
+      onError: getCustomerTokenByEmailAndPasswordError,
+      onCompleted: getCustomerTokenByEmailAndPasswordCompleted(signIn),
+    }
+  );
+
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Animatable.Image
-          animation="bounceIn"
-          source={require('../../../assets/logo2.png')}
-          style={styles.logo}
-          resizeMode="stretch"
-        />
-      </View>
-      <Animatable.View animation="fadeInUpBig" style={styles.footer}>
-        <Text style={styles.textFooter}>E-MAIL</Text>
-        <View style={styles.action}>
-          <FontAwesome name="user-o" color={colors.blue.dark} size={20} />
-          <TextInput
-            placeholder="Your email..."
-            style={styles.textInput}
-            onChangeText={(text) => textInputChange(text)}
-            value={email}
+    <DismissKeyboard>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
+        enabled
+      >
+        <View style={styles.header}>
+          <Animatable.Image
+            animation="bounceIn"
+            source={require('../../../assets/logo2.png')}
+            style={styles.logo}
+            resizeMode="stretch"
           />
-          {checkTextInputChange ? (
-            <Animatable.View animation="bounceIn">
-              <Feather
-                name="check-circle"
-                color={colors.green.normal}
-                size={20}
-              />
-            </Animatable.View>
-          ) : null}
         </View>
-        <Text style={[styles.textFooter, { marginTop: 35 }]}>PASSWORD</Text>
-        <View style={styles.action}>
-          <Feather name="lock" color={colors.blue.dark} size={20} />
-          <TextInput
-            secureTextEntry={secureTextEntry}
-            placeholder="Your password..."
-            style={styles.textInput}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
-          <TouchableOpacity
-            onPress={() => setSecureTextEntry(!secureTextEntry)}
+        <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+          <Formik
+            initialValues={{
+              email: '',
+              password: '',
+            }}
+            validationSchema={signinSchema}
+            onSubmit={(values, { setSubmitting }) => {
+              const { email, password } = values;
+              getCustomerTokenByEmailAndPassword({
+                variables: { email, password },
+              });
+              setSubmitting(false);
+            }}
           >
-            <Feather
-              name={`${secureTextEntry ? 'eye-off' : 'eye'}`}
-              color={`${
-                secureTextEntry ? colors.gray.normal : colors.green.normal
-              }`}
-              size={20}
-            />
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.forgotText}>Forgot password?</Text>
-        <View style={styles.buttons}>
-          <TouchableOpacity onPress={() => navigation.navigate('Rx')} style={styles.button}>
-            <LinearGradient
-              colors={colors.blue.buttonGradient}
-              style={styles.signIn}
-            >
-              <Text style={[styles.textSign, { color: colors.white.normal }]}>
-                Sign In
-              </Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('SignUp')}
-            style={[
-              styles.signIn,
-              { borderColor: colors.blue.sky, borderWidth: 1, marginTop: 15 },
-            ]}
-          >
-            <Text style={[styles.textSign, { color: colors.blue.sky }]}>
-              Sign Up
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Animatable.View>
-    </View>
+            {({
+              handleSubmit,
+              handleReset,
+              isSubmitting,
+              errors,
+              touched,
+              values,
+              handleChange,
+              isValid,
+            }) => {
+              return (
+                <Fragment>
+                  <View>
+                    <AnimatableTextInput
+                      label="E-MAIL"
+                      placeholder="Enter email"
+                      iconName="user-o"
+                      name="email"
+                      value={values.email}
+                      errors={errors}
+                      touched={touched}
+                      handleChange={handleChange('email')}
+                    />
+
+                    <AnimatableTextInput
+                      label="PASSWORD"
+                      placeholder="Enter password"
+                      iconName="lock"
+                      name="password"
+                      value={values.email}
+                      errors={errors}
+                      touched={touched}
+                      handleChange={handleChange('password')}
+                      secureTextEntry={true}
+                      headerStyles={{ marginTop: 35 }}
+                    />
+                  </View>
+                  <View style={styles.buttons}>
+                    <TouchableOpacity
+                      onPress={handleSubmit}
+                      style={styles.button}
+                      disabled={isSubmitting || !isValid}
+                    >
+                      <LinearGradient
+                        colors={colors.blue.buttonGradient}
+                        style={styles.signIn}
+                      >
+                        <Text
+                          style={[
+                            styles.textSign,
+                            { color: colors.white.normal },
+                          ]}
+                        >
+                          Sign In
+                        </Text>
+                      </LinearGradient>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('SignUp')}
+                      style={[
+                        styles.signIn,
+                        {
+                          borderColor: colors.blue.sky,
+                          borderWidth: 1,
+                          marginTop: 15,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[styles.textSign, { color: colors.blue.sky }]}
+                      >
+                        Sign Up
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => navigation.navigate('SignUp')}
+                      style={[
+                        styles.signIn,
+                        {
+                          borderColor: colors.blue.sky,
+                          borderWidth: 1,
+                          marginTop: 15,
+                        },
+                      ]}
+                    >
+                      <Text
+                        style={[styles.textSign, { color: colors.blue.sky }]}
+                      >
+                        Forgot Password
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </Fragment>
+              );
+            }}
+          </Formik>
+        </Animatable.View>
+      </KeyboardAvoidingView>
+    </DismissKeyboard>
   );
 };
 export default SignIn;

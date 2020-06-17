@@ -2,11 +2,7 @@
   "expo": {
     "name": "rx2-mobile",
     "slug": "rx2-mobile",
-    "platforms": [
-      "ios",
-      "android",
-      "web"
-    ],
+    "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,11 +14,42 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "extra": {
+      "rxrunr": {
+        "production": {
+          "apiServerUrl": "rxrunr-server-test.herokuapp.com",
+          "httpProtocol": "https",
+          "wsProtocol": "wss",
+          "drugSearchLimit": 20,
+          "jwtSecret": "test"
+        },
+        "heroku-test": {
+          "apiServerUrl": "rxrunr-server-test.herokuapp.com",
+          "httpProtocol": "https",
+          "wsProtocol": "wss",
+          "drugSearchLimit": 20,
+          "jwtSecret": "test"
+        },
+        "staging": {
+          "apiServerUrl": "rxrunr-server-test.herokuapp.com",
+          "httpProtocol": "https",
+          "wsProtocol": "wss",
+          "drugSearchLimit": 20,
+          "jwtSecret": "test"
+        },
+        "development": {
+          "apiServerUrl": "192.168.0.6:4001",
+          "httpProtocol": "http",
+          "wsProtocol": "ws",
+          "drugSearchLimit": 20,
+          "jwtSecret": "test"
+        }
+      }
+    },
+    "description": "The RxRUNr mobile application allows users to fill prescriptions and have them delivered"
   }
 }

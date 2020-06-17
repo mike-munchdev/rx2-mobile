@@ -16,4 +16,7 @@ export default {
   green: {
     normal: 'green',
   },
+  red: {
+    normal: 'red',
+  },
 };
