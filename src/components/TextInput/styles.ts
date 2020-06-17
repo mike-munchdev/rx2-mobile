@@ -3,24 +3,23 @@ import colors from '../../constants/colors';
 
 const { height } = Dimensions.get('screen');
 const logoHeight = height * 0.7 * 0.4;
-
 export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.blue.dark,
   },
   header: {
-    flex: 3,
+    flex: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   footer: {
-    flex: 4,
+    flex: 2,
     backgroundColor: 'white',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingHorizontal: 30,
-    paddingVertical: 50,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
   },
   logo: {
     height: logoHeight,
@@ -47,10 +46,10 @@ export default StyleSheet.create({
     paddingLeft: 10,
     color: colors.blue.dark,
   },
-  forgotText: { color: colors.blue.light, marginTop: 15 },
+
   buttons: {
     alignItems: 'center',
-    marginTop: 25,
+    marginTop: 50,
   },
   button: {
     width: '100%',
@@ -66,12 +65,8 @@ export default StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  textPrivate: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 20,
-  },
-  textPrivateColor: {
-    color: colors.gray.normal,
+  forgotText: {},
+  errorText: {
+    color: colors.red.normal,
   },
 });

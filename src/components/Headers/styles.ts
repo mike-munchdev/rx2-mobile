@@ -24,11 +24,13 @@ export default StyleSheet.create({
     flex: 1,
     marginLeft: 10,
     alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   headerRight: {
     flex: 1,
-    marginRight: 10,
     alignItems: 'flex-end',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
   headerCenter: {
     flex: 4,
