@@ -1,10 +1,6 @@
 import gql from 'graphql-tag';
-import { useContext } from 'react';
-
 import { ApolloError } from 'apollo-client';
-import { AuthContext } from '../../config/context';
-import DropdownAlert from 'react-native-dropdownalert';
-import { AlertHelper } from '../../utils/alert';
+import { AlertHelper } from '../../../utils/alert';
 
 export const GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD = gql`
   query GetCustomerTokenByEmailAndPassword(

@@ -29,7 +29,7 @@ const RxHeader = () => {
             await signOut();
           }}
         >
-          <FontAwesome name="logout" color={colors.white.normal} size={25} />
+          <FontAwesome name="sign-out" color={colors.white.normal} size={25} />
         </TouchableOpacity>
       </View>
 

@@ -139,6 +139,7 @@ export default () => {
       },
       signIn: async (token: string, location?: string) => {
         setIsLoading(false);
+        await AsyncStorage.setItem('token', token);
         setUserToken(token);
       },
       signUp: (message: string, navigation: any) => {
@@ -148,8 +149,7 @@ export default () => {
         AlertHelper.show('success', 'Sign Up', message);
       },
       signOut: async () => {
-        await AsyncStorage.removeItem('token');
-        await AsyncStorage.removeItem('isLoggedIn');
+        await AsyncStorage.removeItem('token');        
         setIsLoading(false);
         setUserToken(null);
       },

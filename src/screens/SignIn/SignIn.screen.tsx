@@ -17,7 +17,7 @@ import {
   GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD,
   getCustomerTokenByEmailAndPasswordCompleted,
   getCustomerTokenByEmailAndPasswordError,
-} from '../../graphql/queries/tokens';
+} from '../../graphql/queries/token/tokens';
 import styles from './styles';
 import colors from '../../constants/colors';
 

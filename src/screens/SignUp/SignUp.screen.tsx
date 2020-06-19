@@ -24,7 +24,7 @@ import {
   customerSignupError,
   customerSignupCompleted,
   CUSTOMER_SIGNUP,
-} from '../../graphql/queries/customers';
+} from '../../graphql/queries/customer/customer';
 
 const SignUp: FC = () => {
   const [checkTextInputChange, setCheckTextInputChange] = useState(false);

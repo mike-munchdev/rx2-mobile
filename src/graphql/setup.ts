@@ -8,66 +8,60 @@ import { setContext } from 'apollo-link-context';
 import { useServerInfo } from '../hooks/serverInfo';
 
 import { GET_CUSTOMER_CLIENT, GET_CLIENT_INFO } from './queries/localState';
+import AsyncStorage from '@react-native-community/async-storage';
 
-export default (token: string): ApolloClient<any> => {
-  const [httpLinkUri, wsLinkUri] = useServerInfo();
+const [httpLinkUri, wsLinkUri] = useServerInfo();
 
-  // Create an http link:
-  const httpLink = new HttpLink({
-    uri: `${httpLinkUri}/graphql`,
-  });
+// Create an http link:
+const httpLink = new HttpLink({
+  uri: `${httpLinkUri}/graphql`,
+});
 
-  // Create a WebSocket link:
-  const wsLink = new WebSocketLink({
-    uri: `${wsLinkUri}/graphql`,
-    options: {
-      reconnect: true,
-      connectionParams: {
-        'x-auth': token,
-      },
+// Create a WebSocket link:
+const wsLink = new WebSocketLink({
+  uri: `${wsLinkUri}/graphql`,
+  options: {
+    reconnect: true,
+    connectionParams: async () => {
+      const token = await AsyncStorage.getItem('token');
+
+      return {
+        headers: { 'x-auth': token },
+      };
     },
-  });
+  },
+});
 
-  const authLink = setContext(async (_, { headers }) => {
-    // return the headers to the context so httpLink can read them
-    return {
-      headers: {
-        ...headers,
-        'x-auth': token,
-      },
-    };
-  });
-  // using the ability to split links, you can send data to each link
-  // depending on what kind of operation is being sent
-  const link = split(
-    // split based on operation type
-    ({ query }) => {
-      const definition = getMainDefinition(query);
-      return (
-        definition.kind === 'OperationDefinition' &&
-        definition.operation === 'subscription'
-      );
+const authLink = setContext(async (_, { headers }) => {
+  // return the headers to the context so httpLink can read them
+  const token = await AsyncStorage.getItem('token');
+
+  return {
+    headers: {
+      ...headers,
+      'x-auth': token,
     },
-    wsLink,
-    httpLink
-  );
+  };
+});
+// using the ability to split links, you can send data to each link
+// depending on what kind of operation is being sent
+const link = split(
+  // split based on operation type
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition' &&
+      definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink
+);
 
-  const cache = new InMemoryCache();
+const cache = new InMemoryCache();
 
-  cache.writeQuery({
-    query: GET_CLIENT_INFO,
-    data: {
-      clientInfo: {
-        isLoggedIn: false,
-        token: null,
-        customer: null,
-      },
-    },
-  });
-
-  return new ApolloClient({
-    link: authLink.concat(link),
-    cache,
-    resolvers: {},
-  });
-};
+export default new ApolloClient({
+  link: authLink.concat(link),
+  cache,
+  resolvers: {},
+});

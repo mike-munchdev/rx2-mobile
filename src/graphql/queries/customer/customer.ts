@@ -1,8 +1,6 @@
 import gql from 'graphql-tag';
-import { useContext } from 'react';
-import DropdownAlert from 'react-native-dropdownalert';
 import { ApolloError } from 'apollo-client';
-import { AlertHelper } from '../../utils/alert';
+import { AlertHelper } from '../../../utils/alert';
 
 const customersStructure = `{
     id

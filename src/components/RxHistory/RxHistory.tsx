@@ -9,9 +9,19 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { AntDesign, FontAwesome5 } from '@expo/vector-icons';
 import colors from '../../constants/colors';
 import { truncate } from '../../utils/strings';
+import { useQuery } from '@apollo/react-hooks';
+import { GET_MY_RX_HISTORY, rxError, getMyRxHistoryCompleted } from '../../graphql/queries/rx/rxs';
 
 const RxHistory = () => {
-  const refills = useFakeRefills(10);
+  const [rxHistory, setRxHistory] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { data } = useQuery(GET_MY_RX_HISTORY, {
+    fetchPolicy: 'network-only',
+    onError: rxError,
+    onCompleted: getMyRxHistoryCompleted(setRxHistory, setIsLoading)
+  });
+
   const renderItem = ({ item }: { item: IRefill }) => {
     const lastFilledDate = moment(item.lastFilled);
     return (
@@ -58,7 +68,7 @@ const RxHistory = () => {
     <View style={styles.container}>
       <View style={styles.flatList}>
         <FlatList
-          data={refills}
+          data={rxHistory}
           renderItem={renderItem}
           keyExtractor={(item, index) => item.id}
         />
