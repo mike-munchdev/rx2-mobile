@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, createContext } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
@@ -11,7 +11,7 @@ import { Rx } from '../screens/Rx';
 import { Settings } from '../screens/Settings';
 import { Pharmacies } from '../screens/Pharmacies';
 import colors from '../constants/colors';
-import { AuthContext } from './context';
+import { AuthContext, CustomerContext } from './context';
 import GetStarted from '../screens/GetStarted/GetStarted.screen';
 import { useToken } from '../hooks/customerInfo';
 
@@ -19,7 +19,7 @@ import { Sidebar } from '../components/Sidebar';
 import { AlertHelper } from '../utils/alert';
 
 const AuthStack = createStackNavigator();
-const Tabs = createMaterialBottomTabNavigator();
+// const Tabs = createMaterialBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const RxStack = createStackNavigator();
 const PharmaciesStack = createStackNavigator();
@@ -63,41 +63,43 @@ const AuthStackScreen = () => (
   </AuthStack.Navigator>
 );
 
-const TabsScreen = () => (
-  <Tabs.Navigator
-    barStyle={{ backgroundColor: colors.blue.dark }}
-    screenOptions={({ route }) => ({
-      tabBarIcon: ({ focused, color, size }) => {
-        let iconName;
+// const TabsScreen = () => (
+//   <Tabs.Navigator
+//     barStyle={{ backgroundColor: colors.blue.dark }}
+//     screenOptions={({ route }) => ({
+//       tabBarIcon: ({ focused, color, size }) => {
+//         let iconName;
 
-        if (route.name === 'Rx') {
-          iconName = 'pill';
-        } else if (route.name === 'Settings') {
-          iconName = 'cogs';
-        } else if (route.name === 'Pharmacies') {
-          iconName = 'pharmacy';
-        }
+//         if (route.name === 'Rx') {
+//           iconName = 'pill';
+//         } else if (route.name === 'Settings') {
+//           iconName = 'cogs';
+//         } else if (route.name === 'Pharmacies') {
+//           iconName = 'pharmacy';
+//         }
 
-        // You can return any component that you like here!
-        return (
-          <MaterialCommunityIcons
-            name={iconName || 'exclamation'}
-            size={25}
-            color={color}
-          />
-        );
-      },
-    })}
-  >
-    <Tabs.Screen name="Rx" component={RxStackScreen} />
-    <Tabs.Screen name="Pharmacies" component={PharmaciesStackScreen} />
-    <Tabs.Screen name="Settings" component={SettingsStackScreen} />
-  </Tabs.Navigator>
-);
+//         // You can return any component that you like here!
+//         return (
+//           <MaterialCommunityIcons
+//             name={iconName || 'exclamation'}
+//             size={25}
+//             color={color}
+//           />
+//         );
+//       },
+//     })}
+//   >
+//     <Tabs.Screen name="Rx" component={RxStackScreen} />
+//     <Tabs.Screen name="Pharmacies" component={PharmaciesStackScreen} />
+//     <Tabs.Screen name="Settings" component={SettingsStackScreen} />
+//   </Tabs.Navigator>
+// );
 
 const DrawerScreen = () => (
-  <Drawer.Navigator initialRouteName="Rx" drawerContent={Sidebar}>
-    <Drawer.Screen name="Rx" component={TabsScreen} />
+  <Drawer.Navigator initialRouteName="Rx" drawerContent={() => <Sidebar />}>
+    <Drawer.Screen name="Rx" component={RxStackScreen} />
+    <Drawer.Screen name="Pharmacies" component={PharmaciesStackScreen} />
+    <Drawer.Screen name="Settings" component={SettingsStackScreen} />
   </Drawer.Navigator>
 );
 
@@ -131,16 +133,19 @@ const RootStackScreen = (props: any) => {
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
-
+  const [customer, setCustomer] = useState(null);
   const authContext = useMemo(() => {
     return {
       getStarted: async () => {
         await AsyncStorage.setItem('getStarted', 'true');
       },
-      signIn: async (token: string, location?: string) => {
+      signIn: async (token: string, customer: any, location?: string) => {
+        console.log('signIn', customer, token);
         setIsLoading(false);
-        await AsyncStorage.setItem('token', token);
         setUserToken(token);
+        setCustomer(customer);
+        await AsyncStorage.setItem('token', token);
+        await AsyncStorage.setItem('customer', JSON.stringify(customer));
       },
       signUp: (message: string, navigation: any) => {
         AlertHelper.setOnClose(() => {
@@ -149,9 +154,12 @@ export default () => {
         AlertHelper.show('success', 'Sign Up', message);
       },
       signOut: async () => {
-        await AsyncStorage.removeItem('token');        
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('isLoggedIn');
+        await AsyncStorage.removeItem('customer');
         setIsLoading(false);
         setUserToken(null);
+        setCustomer(null);
       },
     };
   }, []);
@@ -174,9 +182,11 @@ export default () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <NavigationContainer>
-        <RootStackScreen userToken={userToken} />
-      </NavigationContainer>
+      <CustomerContext.Provider value={customer}>
+        <NavigationContainer>
+          <RootStackScreen userToken={userToken} />
+        </NavigationContainer>
+      </CustomerContext.Provider>
     </AuthContext.Provider>
   );
 };

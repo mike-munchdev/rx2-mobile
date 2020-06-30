@@ -22,7 +22,7 @@ import styles from './styles';
 import colors from '../../constants/colors';
 
 import { signinSchema } from '../../validation/signin';
-import { useCustomerInfo, useLoggedIn } from '../../hooks/customerInfo';
+import { useLoggedIn } from '../../hooks/customerInfo';
 import { DismissKeyboard } from '../../components/TextInput';
 import AnimatableTextInput from '../../components/TextInput/AnimatableTextInput';
 import { AuthContext } from '../../config/context';

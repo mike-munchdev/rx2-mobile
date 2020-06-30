@@ -1,17 +1,17 @@
-import { Modal } from 'react-native';
+import Loading from '../components/Loading/LoadingModal';
 
 export class LoadingHelper {
-  static modal: Modal | null;
+  static loading: Loading | null;
   static onClose: any;
   static message: string;
   static isVisible: boolean;
 
-  static setModal(modal: Modal | null) {
-    this.modal = modal;
+  static setLoading(loading: Loading | null) {
+    this.loading = loading;
   }
 
   static show(message?: string) {
-    if (this.modal) {
+    if (this.loading) {
       if (message) {
         this.message = message;
       }
@@ -19,14 +19,14 @@ export class LoadingHelper {
     }
   }
   static hide() {
-    if (this.modal) {
+    if (this.loading) {
       this.message = '';
       this.isVisible = false;
     }
   }
 
   static toggle() {
-    if (this.modal) {
+    if (this.loading) {
       this.isVisible = !this.isVisible;
     }
   }

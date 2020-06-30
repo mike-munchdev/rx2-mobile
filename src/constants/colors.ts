@@ -8,6 +8,7 @@ export default {
   },
   gray: {
     normal: 'gray',
+    neutral: 'lightgrey',
   },
   white: {
     normal: 'white',

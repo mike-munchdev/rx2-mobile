@@ -2,11 +2,12 @@ import React, { createContext, useState, useEffect } from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
 import DropdownAlert from 'react-native-dropdownalert';
 import Navigation from './config/Navigation';
-import client from './graphql/setup';
+import client from './graphql/client';
 
 import { AlertHelper } from './utils/alert';
 // import { Modal } from 'react-native';
-// import { ModalHelper } from './utils/modal';
+import { LoadingHelper } from './utils/loading';
+import Loading from './components/Loading/LoadingModal';
 
 export default () => {
   const [token, setToken] = useState<string | undefined | null>(null);
@@ -14,10 +15,6 @@ export default () => {
   return (
     <ApolloProvider client={client}>
       <Navigation />
-      {/* <Modal visible={LoadingHelper.isVisible}>
-        <FontAwesome name="loading" />
-        {LoadingHelper.message ? <Text>{LoadingHelper.message}</Text> : null}
-  </Modal> */}
       <DropdownAlert
         ref={(ref: DropdownAlert) => {
           AlertHelper.setDropDown(ref);

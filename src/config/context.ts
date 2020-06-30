@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { createContext } from 'react';
 
-export const AuthContext = React.createContext({
+export const AuthContext = createContext({
   signIn: async (token: string) => {},
   signOut: async () => {},
   signUp: async () => {},
   getStarted: async () => {},
 });
+
+export const CustomerContext = createContext({ customer: {} });

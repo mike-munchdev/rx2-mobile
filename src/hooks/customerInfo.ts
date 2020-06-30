@@ -20,20 +20,14 @@ export const useToken = async () => {
 };
 
 export const useCustomerInfo = async () => {
+  // console.log('useCustomerInfo', useCustomerInfo);
   const isLoggedIn = await useLoggedIn();
-
-  const token = await useToken();
 
   if (!isLoggedIn) return null;
 
-  const decoded = jwt.decode(
-    token,
-    Constants.manifest.extra.rxrunr[String(NODE_ENV)].jwtSecret
-  );
-
-  const decodedCustomer = (decoded as any).info;
-
-  return decodedCustomer;
+  const customerInfo = await AsyncStorage.getItem('customerInfo');
+  const customer = JSON.parse(customerInfo || '');
+  return customer;
 };
 
 export const useLogout = () => {
@@ -41,6 +35,7 @@ export const useLogout = () => {
   return async () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('isLoggedIn');
+    await AsyncStorage.removeItem('customerInfo');
     navigation.reset({
       index: 0,
       routes: [{ name: 'SignIn' }],

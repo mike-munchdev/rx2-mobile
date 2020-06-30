@@ -2,31 +2,40 @@ import gql from 'graphql-tag';
 import { ApolloError } from 'apollo-client';
 import { AlertHelper } from '../../../utils/alert';
 
-const customersStructure = `{
+export const customersStructure = `{
     id
-    firstName
-    middleInit
-    lastName
     email
-    code
-    ssn
+    firstName
+    middleName
+    lastName
+    suffix
     phoneNumber
-    address
-    address2
-    addressType
-    addressUnit
-    addressNumber
-    addressType
-    addressPostDirection
-    addressPreDirection
-    addressStreet
-    city
-    state
-    zipCode
-    accountCount
-    accountNumber
-    routingNumber
-  }`;
+    cart {
+      id
+      rx
+      price
+      quantity
+    }
+    addresses {
+      streetInfo
+      unitInfo
+      city
+      state
+      zipCode
+      isDefault
+      isDelivery
+    }
+    paymentMethods {
+      id
+      stripeId
+      isDefault
+      isActive
+    }
+    stripeId
+    googleId
+    facebookId
+    createdAt
+}`;
 
 export const GET_CUSTOMER_BY_ID = gql`
   query GetCustomerById($customerId: String!) {
@@ -64,9 +73,46 @@ export const CREATE_CUSTOMER = gql`
   }
 `;
 
+export const CART_MODIFIED_SUBSCRIPTION = gql`
+  subscription CartModified {
+    cartModified {
+      ok
+      customer {
+        id
+        cart {
+          id
+          rx {
+            id
+            rxNumber
+            drug {
+              brand_name
+            }
+          }
+          price
+          quantity
+        }
+      }
+      error {
+        message
+      }
+    }
+  }
+`;
+
 export const CUSTOMER_SIGNUP = gql`
   mutation CustomerSignup($input: CustomerSignupInput!) {
     customerSignup(input: $input) {
+      ok
+      message
+      error {
+        message
+      }
+    }
+  }
+`;
+export const ADD_RX_TO_CART = gql`
+  mutation AddRxToCart($input: AddItemToCartInput!) {
+    addRxToCart(input: $input) {
       ok
       message
       error {
@@ -100,6 +146,33 @@ export const customerSignupCompleted = (
     } else {
       // add client info to local cache and move to accounts page
       await signUp(message, navigation);
+    }
+  } else {
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
+
+export const addRxToCartError = (e: ApolloError) => {
+  AlertHelper.show(
+    'error',
+    'Error',
+    'An error occurred adding Rx to cart. Please try again.'
+  );
+};
+
+export const addRxToCartCompleted = async ({ addRxToCart }) => {
+  const { ok, message, error } = addRxToCart;
+
+  if (ok) {
+    if (!message) {
+      AlertHelper.show(
+        'error',
+        'Error',
+        'No customer found with the given information.'
+      );
+    } else {
+      // add client info to local cache and move to accounts page
+      // await signUp(message, navigation);
     }
   } else {
     AlertHelper.show('error', 'Error', error.message);

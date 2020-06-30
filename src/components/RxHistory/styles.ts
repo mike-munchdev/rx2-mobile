@@ -21,7 +21,7 @@ export default StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
-    height: 100,
+    height: 150,
     flexDirection: 'row',
   },
   leftItemContent: {
@@ -45,6 +45,11 @@ export default StyleSheet.create({
   },
   lastFilledText: {
     fontSize: 16,
+    marginBottom: 5,
+  },
+  nextFilledText: {
+    fontSize: 16,
+    marginBottom: 5,
   },
   rightItemContent: {
     justifyContent: 'flex-start',

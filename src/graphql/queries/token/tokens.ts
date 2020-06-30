@@ -10,6 +10,15 @@ export const GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD = gql`
     getCustomerTokenByEmailAndPassword(email: $email, password: $password) {
       ok
       token
+      customer {
+        id
+        firstName
+        lastName
+        thumbnailUri
+        cart {
+          id
+        }
+      }
       error {
         message
       }
@@ -26,9 +35,9 @@ export const getCustomerTokenByEmailAndPasswordError = (e: ApolloError) => {
 };
 
 export const getCustomerTokenByEmailAndPasswordCompleted = (
-  signIn: (token: string) => void
+  signIn: (token: string, customer: any) => void
 ) => async ({ getCustomerTokenByEmailAndPassword }) => {
-  const { ok, token, error } = getCustomerTokenByEmailAndPassword;
+  const { ok, token, customer, error } = getCustomerTokenByEmailAndPassword;
   if (ok) {
     if (!token) {
       AlertHelper.show(
@@ -38,7 +47,9 @@ export const getCustomerTokenByEmailAndPasswordCompleted = (
       );
     } else {
       // add client info to local cache and move to accounts page
-      await signIn(token);
+      console.log('token', token);
+      console.log('customer', customer);
+      await signIn(token, customer);
     }
   } else {
     AlertHelper.show('error', 'Error', error.message);

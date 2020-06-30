@@ -1,30 +1,32 @@
 import gql from 'graphql-tag';
 import { AlertHelper } from '../../../utils/alert';
 import { ApolloError } from 'apollo-client';
+import { sortByFieldName } from '../../../utils/sort';
 
 const rxStructure = `{
     id
     rxNumber
     numberOfRefillsAllowed
-    refills {
-        filledDate  
-    }
     dosage
     daySupply
-    doctor {
-        firstName
-        middleName
-        lastName
-        prefix
-        suffix
+    filledDate
+    refills {
+      id
+      filledDate
     }
     drug {
-        brandName
-        labelerName
-        genericName
+      brand_name
     }
-    customerId
-    createdAt
+    customer {
+      firstName
+      lastName
+    }
+    doctor {
+      firstName
+      middleName
+      lastName
+    }
+    createdAt  
   }`;
 
 export const GET_MY_RX_HISTORY = gql`
@@ -40,6 +42,7 @@ query GetMyRxHistory {
 }`;
 
 export const rxError = (e: ApolloError) => {
+  console.log('e', e);
   AlertHelper.show('error', 'Error', 'An error occurred and has been logged.');
 };
 
@@ -48,9 +51,14 @@ export const getMyRxHistoryCompleted = (
   setLoading: Function
 ) => async ({ getMyRxHistory }) => {
   const { ok, rxs, error } = getMyRxHistory;
-  console.log('rxs', rxs);
+  // console.log('getMyRxHistoryCompleted: rxs', rxs);
   if (ok) {
-    setRxHistory(rxs);
+    const rxList = rxs.map((r: any) => {
+      r.refills = sortByFieldName(r.refills, 'filledDate', 'asc');
+      return r;
+    });
+
+    setRxHistory(rxList);
   } else {
     AlertHelper.show('error', 'Error', error.message);
   }
