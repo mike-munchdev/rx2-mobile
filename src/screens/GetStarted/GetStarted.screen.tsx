@@ -8,18 +8,18 @@ import { MaterialIcons } from '@expo/vector-icons';
 import styles from './styles';
 import colors from '../../constants/colors';
 import { useNavigation, StackActions } from '@react-navigation/native';
-import { useLoggedIn, useGetStarted } from '../../hooks/customerInfo';
+
 import { AuthContext } from '../../config/context';
 
 const GetStarted = () => {
   const [isDeciding, setIsDeciding] = useState(true);
-  const { getStarted } = useContext(AuthContext);
+  const { setIsStarted, getIsStarted, isLoggedIn } = useContext(AuthContext);
   const navigation = useNavigation();
   useEffect(() => {
     (async () => {
-      const isLoggedIn = await useLoggedIn();
-      const isStarted = await useGetStarted();
-      if (isLoggedIn) {
+      const isUserLoggedIn = await isLoggedIn();
+      const isStarted = await getIsStarted();
+      if (isUserLoggedIn) {
         navigation.dispatch(StackActions.replace('Rx'));
       } else if (isStarted) {
         navigation.dispatch(StackActions.replace('SignIn'));
@@ -45,7 +45,7 @@ const GetStarted = () => {
         <Text style={styles.subTitle}>Sign in with account</Text>
         <TouchableOpacity
           onPress={() => {
-            getStarted();
+            setIsStarted(true);
             navigation.navigate('SignIn');
           }}
         >

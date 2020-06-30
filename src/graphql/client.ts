@@ -7,7 +7,6 @@ import { getMainDefinition } from 'apollo-utilities';
 import { setContext } from 'apollo-link-context';
 import { useServerInfo } from '../hooks/serverInfo';
 
-import { GET_CUSTOMER_CLIENT, GET_CLIENT_INFO } from './queries/localState';
 import AsyncStorage from '@react-native-community/async-storage';
 
 const [httpLinkUri, wsLinkUri] = useServerInfo();

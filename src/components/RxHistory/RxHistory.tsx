@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useContext } from 'react';
 
 import { Text, View, FlatList, TouchableOpacity, Modal } from 'react-native';
 import moment from 'moment';
@@ -23,11 +23,13 @@ import {
   addRxToCartCompleted,
   ADD_RX_TO_CART,
 } from '../../graphql/queries/customer/customer';
+import { CustomerContext } from '../../config/context';
+import { AlertHelper } from '../../utils/alert';
 
 const RxHistory = () => {
   const [rxHistory, setRxHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
+  const { customer } = useContext(CustomerContext);
   const [addRxToCart] = useMutation(ADD_RX_TO_CART, {
     onError: addRxToCartError,
     onCompleted: addRxToCartCompleted,
@@ -88,11 +90,22 @@ const RxHistory = () => {
             <TouchableOpacity
               style={styles.button}
               onPress={async () => {
-                const result = await addRxToCart({
-                  variables: {
-                    input: { rxId: item.id, price: 50, quantity: 1 },
-                  },
-                });
+                const cartIndex = customer.cart.findIndex(
+                  (c: any) => c.rx.id === item.id
+                );
+                if (cartIndex >= 0) {
+                  AlertHelper.show(
+                    'warn',
+                    'Duplicate Rx',
+                    'The Rx is already in your cart'
+                  );
+                } else {
+                  const result = await addRxToCart({
+                    variables: {
+                      input: { rxId: item.id, price: 50, quantity: 1 },
+                    },
+                  });
+                }
               }}
             >
               <FontAwesome5

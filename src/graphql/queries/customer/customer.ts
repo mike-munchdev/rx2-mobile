@@ -12,7 +12,14 @@ export const customersStructure = `{
     phoneNumber
     cart {
       id
-      rx
+      rx {
+        id
+        rxNumber
+        drug {
+          id
+          brand_name
+        }
+      }     
       price
       quantity
     }

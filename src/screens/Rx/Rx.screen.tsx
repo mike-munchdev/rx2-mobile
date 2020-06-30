@@ -9,18 +9,8 @@ import styles from './styles';
 import colors from '../../constants/colors';
 import { RxHeader } from '../../components/Headers';
 import { RxHistory } from '../../components/RxHistory';
-import { useLoggedIn } from '../../hooks/customerInfo';
 
 const Rx = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      const isLoggedIn = await useLoggedIn();
-      setIsLoggedIn(Boolean(isLoggedIn));
-    })();
-  }, []);
-
   return (
     <View style={styles.container}>
       <RxHeader />

@@ -17,6 +17,16 @@ export const GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD = gql`
         thumbnailUri
         cart {
           id
+          rx {
+            id
+            rxNumber
+            drug {
+              id
+              brand_name
+            }
+          }
+          price
+          quantity
         }
       }
       error {

@@ -4,7 +4,13 @@ export const AuthContext = createContext({
   signIn: async (token: string) => {},
   signOut: async () => {},
   signUp: async () => {},
-  getStarted: async () => {},
+  setIsStarted: async (value: boolean) => {},
+  getIsStarted: async () => {
+    return false;
+  },
+  isLoggedIn: async () => {
+    return false;
+  },
 });
 
 export const CustomerContext = createContext({

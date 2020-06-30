@@ -15,12 +15,16 @@ const ShoppingCartIcon: FC = () => {
 
   const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
     onSubscriptionData: ({ client, subscriptionData }) => {
-      setCustomer(subscriptionData.data.customer);
+      const { cartModified } = subscriptionData.data;
+      if (cartModified.ok) {
+        setCustomer(cartModified.customer);
+      }
     },
     fetchPolicy: 'network-only',
   });
 
   useEffect(() => {
+    console.log('ShoppingCartIcon: useEffect', customer.cart);
     if (customer.cart) {
       setBadgeValue(customer.cart.length);
     }

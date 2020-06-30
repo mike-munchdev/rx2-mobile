@@ -22,21 +22,19 @@ import styles from './styles';
 import colors from '../../constants/colors';
 
 import { signinSchema } from '../../validation/signin';
-import { useLoggedIn } from '../../hooks/customerInfo';
+
 import { DismissKeyboard } from '../../components/TextInput';
 import AnimatableTextInput from '../../components/TextInput/AnimatableTextInput';
 import { AuthContext } from '../../config/context';
 
 const SignIn: FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { signIn } = useContext(AuthContext);
+  const { signIn, isLoggedIn } = useContext(AuthContext);
 
   const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
-      const isLoggedIn = await useLoggedIn();
-      setIsLoggedIn(Boolean(isLoggedIn));
+      const isUserLoggedIn = await isLoggedIn();
     })();
   }, []);
 

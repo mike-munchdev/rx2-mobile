@@ -136,8 +136,12 @@ export default () => {
   const [customer, setCustomer] = useState(null);
   const authContext = useMemo(() => {
     return {
-      getStarted: async () => {
-        await AsyncStorage.setItem('getStarted', 'true');
+      getIsStarted: async () => {
+        const isStarted = await AsyncStorage.getItem('isStarted');
+        return isStarted;
+      },
+      setIsStarted: async (value: boolean) => {
+        await AsyncStorage.setItem('isStarted', String(value));
       },
       signIn: async (token: string, customer: any, location?: string) => {
         setIsLoading(false);
@@ -159,6 +163,10 @@ export default () => {
         setIsLoading(false);
         setUserToken(null);
         setCustomer(null);
+      },
+      isLoggedIn: async () => {
+        const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
+        return isLoggedIn;
       },
     };
   }, []);
