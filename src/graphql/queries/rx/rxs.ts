@@ -42,7 +42,6 @@ query GetMyRxHistory {
 }`;
 
 export const rxError = (e: ApolloError) => {
-  console.log('e', e);
   AlertHelper.show('error', 'Error', 'An error occurred and has been logged.');
 };
 
@@ -51,7 +50,7 @@ export const getMyRxHistoryCompleted = (
   setLoading: Function
 ) => async ({ getMyRxHistory }) => {
   const { ok, rxs, error } = getMyRxHistory;
-  // console.log('getMyRxHistoryCompleted: rxs', rxs);
+
   if (ok) {
     const rxList = rxs.map((r: any) => {
       r.refills = sortByFieldName(r.refills, 'filledDate', 'asc');

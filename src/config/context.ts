@@ -7,4 +7,7 @@ export const AuthContext = createContext({
   getStarted: async () => {},
 });
 
-export const CustomerContext = createContext({ customer: {} });
+export const CustomerContext = createContext({
+  setCustomer: (customer: any) => {},
+  customer: {},
+});

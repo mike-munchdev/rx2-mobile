@@ -14,9 +14,8 @@ import { useNavigation } from '@react-navigation/native';
 
 const Sidebar = () => {
   const { signOut } = useContext(AuthContext);
-  const customer = useContext(CustomerContext);
-  const navigation = useNavigation();
-  console.log('Sidebar: customer', customer);
+  const { customer } = useContext(CustomerContext);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginLeft: 10 }}>

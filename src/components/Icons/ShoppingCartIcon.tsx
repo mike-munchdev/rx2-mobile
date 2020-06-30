@@ -11,21 +11,17 @@ import { AlertHelper } from '../../utils/alert';
 
 const ShoppingCartIcon: FC = () => {
   const [badgeValue, setBadgeValue] = useState(0);
-  const customer = useContext(CustomerContext);
+  const { customer, setCustomer } = useContext(CustomerContext);
 
   const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
     onSubscriptionData: ({ client, subscriptionData }) => {
-      console.log('subscription data', subscriptionData.data);
-      console.log('customer', customer);
-      // console.log('setCustomer', setCustomer);
-      // setCustomer(subscriptionData.data.customer);
+      setCustomer(subscriptionData.data.customer);
     },
     fetchPolicy: 'network-only',
   });
 
   useEffect(() => {
-    if (customer) {
-      console.log('customer', customer);
+    if (customer.cart) {
       setBadgeValue(customer.cart.length);
     }
   }, [customer]);

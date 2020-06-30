@@ -88,14 +88,11 @@ const RxHistory = () => {
             <TouchableOpacity
               style={styles.button}
               onPress={async () => {
-                console.log('item', item);
-                alert(`filling prescription for #${item.rxNumber}`);
                 const result = await addRxToCart({
                   variables: {
                     input: { rxId: item.id, price: 50, quantity: 1 },
                   },
                 });
-                console.log('result', result);
               }}
             >
               <FontAwesome5
@@ -110,7 +107,6 @@ const RxHistory = () => {
     );
   };
 
-  console.log('loading');
   if (isLoading) return <Loading />;
 
   return (

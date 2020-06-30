@@ -140,7 +140,6 @@ export default () => {
         await AsyncStorage.setItem('getStarted', 'true');
       },
       signIn: async (token: string, customer: any, location?: string) => {
-        console.log('signIn', customer, token);
         setIsLoading(false);
         setUserToken(token);
         setCustomer(customer);
@@ -166,9 +165,13 @@ export default () => {
 
   useEffect(() => {
     (async () => {
-      const token = await useToken();
+      const token = await AsyncStorage.getItem('token');
+      const customer = await AsyncStorage.getItem('customer');
       if (token) {
         setUserToken(token);
+      }
+      if (customer) {
+        setCustomer(JSON.parse(customer));
       }
       setTimeout(() => {
         setIsLoading(false);
@@ -182,7 +185,14 @@ export default () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <CustomerContext.Provider value={customer}>
+      <CustomerContext.Provider
+        value={{
+          customer: customer || {},
+          setCustomer: (customer: any) => {
+            setCustomer(customer);
+          },
+        }}
+      >
         <NavigationContainer>
           <RootStackScreen userToken={userToken} />
         </NavigationContainer>

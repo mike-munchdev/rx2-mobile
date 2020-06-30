@@ -20,7 +20,6 @@ export const useToken = async () => {
 };
 
 export const useCustomerInfo = async () => {
-  // console.log('useCustomerInfo', useCustomerInfo);
   const isLoggedIn = await useLoggedIn();
 
   if (!isLoggedIn) return null;

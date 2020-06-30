@@ -47,8 +47,6 @@ export const getCustomerTokenByEmailAndPasswordCompleted = (
       );
     } else {
       // add client info to local cache and move to accounts page
-      console.log('token', token);
-      console.log('customer', customer);
       await signIn(token, customer);
     }
   } else {
