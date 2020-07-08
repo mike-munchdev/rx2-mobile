@@ -110,7 +110,7 @@ export const CUSTOMER_SIGNUP = gql`
   mutation CustomerSignup($input: CustomerSignupInput!) {
     customerSignup(input: $input) {
       ok
-      message
+      customer ${customersStructure}
       error {
         message
       }
@@ -121,7 +121,7 @@ export const ADD_RX_TO_CART = gql`
   mutation AddRxToCart($input: AddItemToCartInput!) {
     addRxToCart(input: $input) {
       ok
-      message
+      customer ${customersStructure}
       error {
         message
       }
@@ -132,7 +132,7 @@ export const REMOVE_RX_FROM_CART = gql`
   mutation RemoveRxFromCart($input: RemoveRxFromCartInput!) {
     removeRxFromCart(input: $input) {
       ok
-      message
+      customer ${customersStructure}
       error {
         message
       }
@@ -179,26 +179,23 @@ export const addRxToCartError = (e: ApolloError) => {
   );
 };
 
-export const addRxToCartCompleted = (setLoading: Function) => async ({
-  addRxToCart,
-}) => {
+export const addRxToCartCompleted = (
+  setLoading: Function,
+  setCustomer: Function
+) => async ({ addRxToCart }) => {
   setLoading(true);
-  setTimeout(() => {
-    console.log('timeout');
-  }, 5000);
-  const { ok, message, error } = addRxToCart;
+
+  const { ok, customer, error } = addRxToCart;
 
   if (ok) {
-    if (!message) {
+    if (!customer) {
       setLoading(false);
-      AlertHelper.show(
-        'error',
-        'Error',
-        'No customer found with the given information.'
-      );
+
+      AlertHelper.show('error', 'Error', 'Error retrieving information.');
     } else {
       // add client info to local cache and move to accounts page
       // await signUp(message, navigation);
+      setCustomer(customer);
       setLoading(false);
     }
   } else {
@@ -208,18 +205,17 @@ export const addRxToCartCompleted = (setLoading: Function) => async ({
   }
 };
 export const removeRxFromCartError = (e: ApolloError) => {
-  AlertHelper.show(
-    'error',
-    'Error',
-    'An error occurred removing Rx from cart. Please try again.'
-  );
+  AlertHelper.show('error', 'Error', e.message);
 };
 
-export const removeRxFromCartCompleted = async ({ removeRxFromCart }) => {
-  const { ok, message, error } = removeRxFromCart;
+export const removeRxFromCartCompleted = (
+  setLoading: Function,
+  setCustomer: Function
+) => async ({ removeRxFromCart }) => {
+  const { ok, customer, error } = removeRxFromCart;
 
   if (ok) {
-    if (!message) {
+    if (!customer) {
       AlertHelper.show(
         'error',
         'Error',
@@ -228,6 +224,8 @@ export const removeRxFromCartCompleted = async ({ removeRxFromCart }) => {
     } else {
       // add client info to local cache and move to accounts page
       // await signUp(message, navigation);
+      setCustomer(customer);
+      setLoading(false);
     }
   } else {
     console.log('removeRxFromCartCompleted: error', error);

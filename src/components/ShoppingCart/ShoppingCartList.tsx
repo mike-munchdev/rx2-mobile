@@ -22,6 +22,7 @@ import { AlertHelper } from '../../utils/alert';
 
 import { RoundedIconButton } from '../Buttons';
 import { HorizontalRule } from '../HorizontalRule';
+import { RxRunrContext } from '../../config/context';
 
 export interface IShoppingCartListProps {
   customer: any;
@@ -35,11 +36,12 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
 }) => {
   const [rxHistory, setShoppingCartList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { setCustomerContext } = useContext(RxRunrContext);
 
   const [removeRxFromCart] = useMutation(REMOVE_RX_FROM_CART, {
     fetchPolicy: 'no-cache',
     onError: removeRxFromCartError,
-    onCompleted: removeRxFromCartCompleted,
+    onCompleted: removeRxFromCartCompleted(setIsLoading, setCustomerContext),
   });
 
   const renderItem = ({ item }: { item: any }) => {

@@ -175,15 +175,15 @@ export default () => {
   const [userToken, setUserToken] = useState(null);
   const [customer, setCustomer] = useState(null);
 
-  const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
-    onSubscriptionData: ({ client, subscriptionData }) => {
-      const { cartModified } = subscriptionData.data;
-      if (cartModified.ok) {
-        updateCustomer(cartModified.customer);
-      }
-    },
-    fetchPolicy: 'network-only',
-  });
+  // const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
+  //   onSubscriptionData: ({ client, subscriptionData }) => {
+  //     const { cartModified } = subscriptionData.data;
+  //     if (cartModified.ok) {
+  //       updateCustomer(cartModified.customer);
+  //     }
+  //   },
+  //   fetchPolicy: 'network-only',
+  // });
 
   const updateCustomer = async (customer: any) => {
     console.log('updateCustomer', customer);
