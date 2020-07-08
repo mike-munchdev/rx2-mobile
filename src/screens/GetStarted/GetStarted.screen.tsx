@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import PropTypes from 'prop-types';
+
 import { Text, View, StatusBar, TouchableOpacity } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import { LinearGradient } from 'expo-linear-gradient';

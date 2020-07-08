@@ -6,7 +6,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import styles from './styles';
 import colors from '../../constants/colors';
 
-import { AuthContext, CustomerContext } from '../../config/context';
+import { AuthContext, RxRunrContext } from '../../config/context';
 
 import SidebarMenuItem from './SidebarMenuItem';
 import { HorizontalRule } from '../HorizontalRule/';
@@ -14,15 +14,16 @@ import { useNavigation } from '@react-navigation/native';
 
 const Sidebar = () => {
   const { signOut } = useContext(AuthContext);
-  const { customer } = useContext(CustomerContext);
-
+  const { customer } = useContext(RxRunrContext);
+  const navigation = useNavigation();
+  console.log('customer', customer);
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ marginLeft: 10 }}>
+      <View style={{ marginLeft: 10, marginBottom: 20 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <FontAwesome name="user-circle" color={colors.blue.dark} size={32} />
           <TouchableOpacity
-            onPress={() => alert('Under Development')}
+            onPress={() => navigation.navigate('Profile')}
             style={{ marginLeft: 15 }}
           >
             <Text style={{ fontSize: 18 }}>{`${
@@ -33,11 +34,11 @@ const Sidebar = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <HorizontalRule styles={{ marginTop: 30 }} />
-      <View style={{ marginTop: 20, marginLeft: 10 }}>
+      <HorizontalRule styles={{ marginBottom: 20 }} />
+      <View style={{ marginLeft: 10, marginBottom: 20 }}>
         <SidebarMenuItem
           onPress={async () => {
-            alert('Under Development');
+            navigation.navigate('Rx');
           }}
           icon={() => (
             <MaterialCommunityIcons
@@ -48,7 +49,7 @@ const Sidebar = () => {
           )}
           title="Rx"
         />
-        <SidebarMenuItem
+        {/* <SidebarMenuItem
           onPress={async () => {
             alert('Under Development');
           }}
@@ -57,19 +58,18 @@ const Sidebar = () => {
           iconSize={20}
           title="Pharmacy"
           viewStyles={{ marginTop: 20 }}
-        />
+        /> */}
       </View>
-      <HorizontalRule styles={{ marginTop: 30 }} />
-      <View style={{ marginTop: 10, marginLeft: 10 }}>
+      <HorizontalRule styles={{ marginBottom: 20 }} />
+      <View style={{ marginLeft: 10, marginBottom: 20 }}>
         <SidebarMenuItem
           onPress={async () => {
-            alert('Under Development');
+            navigation.navigate('Settings');
           }}
           iconName="cog"
           iconColor={colors.blue.dark}
           iconSize={20}
           title="Settings"
-          viewStyles={{ marginTop: 15 }}
         />
         <SidebarMenuItem
           onPress={async () => {
@@ -82,7 +82,7 @@ const Sidebar = () => {
           viewStyles={{ marginTop: 20 }}
         />
       </View>
-      <HorizontalRule styles={{ marginTop: 30 }} />
+      <HorizontalRule styles={{ marginBottom: 20 }} />
     </SafeAreaView>
   );
 };

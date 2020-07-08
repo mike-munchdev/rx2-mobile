@@ -128,6 +128,17 @@ export const ADD_RX_TO_CART = gql`
     }
   }
 `;
+export const REMOVE_RX_FROM_CART = gql`
+  mutation RemoveRxFromCart($input: RemoveRxFromCartInput!) {
+    removeRxFromCart(input: $input) {
+      ok
+      message
+      error {
+        message
+      }
+    }
+  }
+`;
 
 export const customerSignupError = (e: ApolloError) => {
   AlertHelper.show(
@@ -155,6 +166,7 @@ export const customerSignupCompleted = (
       await signUp(message, navigation);
     }
   } else {
+    console.log('customerSignupCompleted: error', error);
     AlertHelper.show('error', 'Error', error.message);
   }
 };
@@ -167,8 +179,44 @@ export const addRxToCartError = (e: ApolloError) => {
   );
 };
 
-export const addRxToCartCompleted = async ({ addRxToCart }) => {
+export const addRxToCartCompleted = (setLoading: Function) => async ({
+  addRxToCart,
+}) => {
+  setLoading(true);
+  setTimeout(() => {
+    console.log('timeout');
+  }, 5000);
   const { ok, message, error } = addRxToCart;
+
+  if (ok) {
+    if (!message) {
+      setLoading(false);
+      AlertHelper.show(
+        'error',
+        'Error',
+        'No customer found with the given information.'
+      );
+    } else {
+      // add client info to local cache and move to accounts page
+      // await signUp(message, navigation);
+      setLoading(false);
+    }
+  } else {
+    console.log('addRxToCartCompleted: error', error);
+    setLoading(false);
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
+export const removeRxFromCartError = (e: ApolloError) => {
+  AlertHelper.show(
+    'error',
+    'Error',
+    'An error occurred removing Rx from cart. Please try again.'
+  );
+};
+
+export const removeRxFromCartCompleted = async ({ removeRxFromCart }) => {
+  const { ok, message, error } = removeRxFromCart;
 
   if (ok) {
     if (!message) {
@@ -182,6 +230,7 @@ export const addRxToCartCompleted = async ({ addRxToCart }) => {
       // await signUp(message, navigation);
     }
   } else {
+    console.log('removeRxFromCartCompleted: error', error);
     AlertHelper.show('error', 'Error', error.message);
   }
 };

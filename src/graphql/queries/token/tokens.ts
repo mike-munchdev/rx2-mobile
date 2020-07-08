@@ -60,6 +60,7 @@ export const getCustomerTokenByEmailAndPasswordCompleted = (
       await signIn(token, customer);
     }
   } else {
+    console.log('getCustomerTokenByEmailAndPassword: error', error);
     AlertHelper.show('error', 'Error', error.message);
   }
 };

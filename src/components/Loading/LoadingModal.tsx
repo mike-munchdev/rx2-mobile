@@ -1,16 +1,30 @@
 import React, { useState, useEffect, FC } from 'react';
-import PropTypes from 'prop-types';
-import { Text, Modal, View } from 'react-native';
-import { AntDesign, FontAwesome, FontAwesome5 } from '@expo/vector-icons';
-import * as Animatable from 'react-native-animatable';
+
+import { Text, Modal, View, Animated } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import styles from './styles';
+import colors from '../../constants/colors';
 
-export interface ILoadingProps {
+const AnimatedIcon = Animated.createAnimatedComponent(MaterialCommunityIcons);
+export interface ILoadingModalProps {
   isVisible: boolean;
   animationType?: 'fade' | 'none' | 'slide' | undefined;
 }
-const Loading: FC<ILoadingProps> = ({ isVisible, animationType }) => {
+const loadingSpin = new Animated.Value(0);
+
+const LoadingModal: FC<ILoadingModalProps> = ({ isVisible, animationType }) => {
+  useEffect(() => {
+    spinAnimation();
+  }, []);
+  const spinAnimation = () => {
+    loadingSpin.setValue(0);
+    Animated.timing(loadingSpin, {
+      toValue: 1,
+      duration: 1000,
+    }).start(() => spinAnimation());
+  };
+
   return (
     <Modal
       animationType={animationType || 'fade'}
@@ -18,30 +32,16 @@ const Loading: FC<ILoadingProps> = ({ isVisible, animationType }) => {
       transparent
       visible={isVisible}
     >
-      <View style={styles.container}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            alignContent: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Animatable.Text
-            animation="pulse"
-            easing="ease-out"
-            iterationCount="infinite"
-            style={{ textAlign: 'center', fontSize: 24 }}
-          >
-            Loading
-          </Animatable.Text>
-        </View>
+      <View style={styles.loadingContainer}>
+        {/* <AnimatedIcon style={{transform: [rotate: spin] }} /> */}
+        <MaterialCommunityIcons
+          name="pill"
+          size={38}
+          color={colors.blue.dark}
+        />
+        <Text>Loading</Text>
       </View>
     </Modal>
   );
 };
-export default Loading;
-
-Loading.propTypes = {
-  text: PropTypes.string,
-};
+export default LoadingModal;

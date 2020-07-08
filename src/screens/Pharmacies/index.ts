@@ -1,3 +1,3 @@
-import Pharmacies from './Pharmacies.screen';
+import SelectPharmacy from './SelectPharmacy.screen';
 
-export { Pharmacies };
+export { SelectPharmacy };

@@ -13,7 +13,16 @@ export const AuthContext = createContext({
   },
 });
 
-export const CustomerContext = createContext({
-  setCustomer: (customer: any) => {},
+export const RxRunrContext = createContext({
+  setCustomerContext: (customer: any) => {},
   customer: {},
+
+  setPharmacyContext: (pharmacy: any) => {},
+  pharmacy: {},
+
+  setLocationContext: (location: any) => {},
+  location: {},
+
+  setPaymentMethodContext: (paymentMethod: any) => {},
+  paymentMethod: {},
 });

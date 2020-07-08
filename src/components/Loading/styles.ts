@@ -10,4 +10,10 @@ export default StyleSheet.create({
     right: 0,
     top: 0,
   },
+  loadingContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

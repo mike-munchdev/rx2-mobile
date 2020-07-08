@@ -5,10 +5,9 @@ export default StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    marginTop: 20,
   },
   flatList: {
-    flex: 1,
+    flex: 5,
   },
   item: {
     flex: 1,
@@ -21,21 +20,21 @@ export default StyleSheet.create({
   },
   itemContainer: {
     flex: 1,
-    height: 150,
+    height: 50,
     flexDirection: 'row',
   },
   leftItemContent: {
     flex: 1,
+    justifyContent: 'center',
   },
   text: {
-    color: colors.white.normal,
+    color: colors.blue.dark,
   },
   drugText: {
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 20,
-    marginBottom: 5,
   },
-  doseText: {
+  priceText: {
     fontSize: 16,
     marginBottom: 5,
   },
@@ -62,5 +61,29 @@ export default StyleSheet.create({
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  rowBack: {
+    alignItems: 'center',
+    backgroundColor: '#DDD',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+  },
+  backRightBtn: {
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: 75,
+  },
+  backRightBtnLeft: {
+    backgroundColor: 'blue',
+    right: 75,
+  },
+  backRightBtnRight: {
+    backgroundColor: 'red',
+    right: 0,
   },
 });

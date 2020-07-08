@@ -1,3 +1,3 @@
-import Rx from './Rx.screen';
+import RxHistory from './RxHistory.screen';
 
-export { Rx };
+export { RxHistory };

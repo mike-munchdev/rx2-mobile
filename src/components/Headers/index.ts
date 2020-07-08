@@ -1,3 +1,6 @@
 import RxHeader from './RxHeader';
+import SettingsHeader from './SettingsHeader';
+import ProfileHeader from './ProfileHeader';
+import ShoppingCartHeader from './ShoppingCartHeader';
 
-export { RxHeader };
+export { RxHeader, SettingsHeader, ProfileHeader, ShoppingCartHeader };

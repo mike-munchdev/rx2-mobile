@@ -17,26 +17,32 @@ import {
   rxError,
   getMyRxHistoryCompleted,
 } from '../../graphql/queries/rx/rxs';
-import { Loading } from '../Loading';
+import { LoadingModal, Loading } from '../Loading';
 import {
   addRxToCartError,
   addRxToCartCompleted,
   ADD_RX_TO_CART,
 } from '../../graphql/queries/customer/customer';
-import { CustomerContext } from '../../config/context';
+import { RxRunrContext } from '../../config/context';
 import { AlertHelper } from '../../utils/alert';
+import { RxHeader } from '../Headers';
+import { useNavigation } from '@react-navigation/native';
+import { RoundedIconButton } from '../Buttons';
+import { color } from 'react-native-reanimated';
 
 const RxHistory = () => {
   const [rxHistory, setRxHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { customer } = useContext(CustomerContext);
+  const { customer } = useContext(RxRunrContext);
+
   const [addRxToCart] = useMutation(ADD_RX_TO_CART, {
+    fetchPolicy: 'no-cache',
     onError: addRxToCartError,
-    onCompleted: addRxToCartCompleted,
+    onCompleted: addRxToCartCompleted(setIsLoading),
   });
 
   const [getMyRxHistory] = useLazyQuery(GET_MY_RX_HISTORY, {
-    fetchPolicy: 'network-only',
+    fetchPolicy: 'no-cache',
     onError: rxError,
     onCompleted: getMyRxHistoryCompleted(setRxHistory, setIsLoading),
   });
@@ -87,8 +93,14 @@ const RxHistory = () => {
             </Text>
           </View>
           <View style={styles.rightItemContent}>
-            <TouchableOpacity
-              style={styles.button}
+            <RoundedIconButton
+              size={30}
+              borderColor={colors.blue.sky}
+              backgroundColor={colors.white.normal}
+              iconName="prescription-bottle"
+              iconSize={20}
+              iconColor={colors.blue.light}
+              borderWidth={1}
               onPress={async () => {
                 const cartIndex = customer.cart.findIndex(
                   (c: any) => c.rx.id === item.id
@@ -102,28 +114,29 @@ const RxHistory = () => {
                 } else {
                   const result = await addRxToCart({
                     variables: {
-                      input: { rxId: item.id, price: 50, quantity: 1 },
+                      input: { rxId: item.id, quantity: 1 },
                     },
                   });
                 }
               }}
             >
               <FontAwesome5
-                name="prescription-bottle-alt"
+                name="prescription-bottle"
                 color={colors.blue.light}
                 size={20}
               />
-            </TouchableOpacity>
+            </RoundedIconButton>
           </View>
         </View>
       </LinearGradient>
     );
   };
 
-  if (isLoading) return <Loading />;
+  // if (isLoading) return <Loading />;
 
   return (
-    <View style={styles.container}>
+    <Fragment>
+      <LoadingModal isVisible={isLoading} animationType="none" />
       <View style={styles.flatList}>
         <FlatList
           data={rxHistory}
@@ -131,7 +144,7 @@ const RxHistory = () => {
           keyExtractor={(item, index) => item.id}
         />
       </View>
-    </View>
+    </Fragment>
   );
 };
 export default RxHistory;

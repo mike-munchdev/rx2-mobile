@@ -42,7 +42,7 @@
           "jwtSecret": "test"
         },
         "development": {
-          "apiServerUrl": "192.168.0.3:4001",
+          "apiServerUrl": "192.168.0.9:4001",
           "httpProtocol": "http",
           "wsProtocol": "ws",
           "drugSearchLimit": 20,

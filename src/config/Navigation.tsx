@@ -4,43 +4,79 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Splash, SignIn, SignUp } from '../screens';
-import { Rx } from '../screens/Rx';
+import { RxHistory } from '../screens/Rx';
 import { Settings } from '../screens/Settings';
-import { Pharmacies } from '../screens/Pharmacies';
+import { SelectPharmacy } from '../screens/Pharmacies';
 import colors from '../constants/colors';
-import { AuthContext, CustomerContext } from './context';
+import { AuthContext, RxRunrContext } from './context';
 import GetStarted from '../screens/GetStarted/GetStarted.screen';
-import { useToken } from '../hooks/customerInfo';
 
 import { Sidebar } from '../components/Sidebar';
 import { AlertHelper } from '../utils/alert';
+import { NewRx } from '../screens/NewRx';
+import { ShoppingCart } from '../screens/ShoppingCart';
+import { Profile } from '../screens/Profile';
+import { useSubscription } from '@apollo/react-hooks';
+import { CART_MODIFIED_SUBSCRIPTION } from '../graphql/queries/customer/customer';
+import { Modal } from '../screens/Modal';
 
 const AuthStack = createStackNavigator();
-// const Tabs = createMaterialBottomTabNavigator();
+const Tabs = createMaterialBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 const RxStack = createStackNavigator();
-const PharmaciesStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 const SettingsStack = createStackNavigator();
 
 const RxStackScreen = () => (
-  <RxStack.Navigator screenOptions={{ headerShown: false }}>
-    <RxStack.Screen name="Rx" component={Rx} />
+  <RxStack.Navigator
+    initialRouteName="RxHistory"
+    screenOptions={{ headerShown: false }}
+    mode="modal"
+  >
+    <RxStack.Screen name="RxHistory" component={RxHistory} />
+    <RxStack.Screen name="NewRx" component={NewRx} />
+    <RxStack.Screen name="ShoppingCart" component={ShoppingCart} />
+    <RxStack.Screen name="SelectPharmacy" component={SelectPharmacy} />
+    <RxStack.Screen
+      name="Modal"
+      component={Modal}
+      options={{
+        animationEnabled: true,
+        cardStyle: { backgroundColor: 'rgba(0,0,0,0.15)' },
+        cardOverlayEnabled: true,
+        cardStyleInterpolator: ({ current: { progress } }) => {
+          return {
+            cardStyle: {
+              opacity: progress.interpolate({
+                inputRange: [0, 0.5, 0.9, 1],
+                outputRange: [0, 0.25, 0.7, 1],
+              }),
+            },
+            overlayStyle: {
+              opacity: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 0.5],
+                extrapolate: 'clamp',
+              }),
+            },
+          };
+        },
+      }}
+    />
   </RxStack.Navigator>
-);
-
-const PharmaciesStackScreen = () => (
-  <PharmaciesStack.Navigator screenOptions={{ headerShown: false }}>
-    <PharmaciesStack.Screen name="Pharmacies" component={Pharmacies} />
-  </PharmaciesStack.Navigator>
 );
 
 const SettingsStackScreen = () => (
   <SettingsStack.Navigator screenOptions={{ headerShown: false }}>
     <SettingsStack.Screen name="Settings" component={Settings} />
   </SettingsStack.Navigator>
+);
+const ProfileStackScreen = () => (
+  <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+    <ProfileStack.Screen name="Profile" component={Profile} />
+  </ProfileStack.Navigator>
 );
 
 const AuthStackScreen = () => (
@@ -63,47 +99,51 @@ const AuthStackScreen = () => (
   </AuthStack.Navigator>
 );
 
-// const TabsScreen = () => (
+// const RxTabsScreen = () => (
 //   <Tabs.Navigator
 //     barStyle={{ backgroundColor: colors.blue.dark }}
 //     screenOptions={({ route }) => ({
 //       tabBarIcon: ({ focused, color, size }) => {
 //         let iconName;
-
-//         if (route.name === 'Rx') {
-//           iconName = 'pill';
-//         } else if (route.name === 'Settings') {
-//           iconName = 'cogs';
-//         } else if (route.name === 'Pharmacies') {
-//           iconName = 'pharmacy';
+//         console.log('route.name', route.name);
+//         switch (route.name) {
+//           case 'Rx':
+//             return <FontAwesome5 name="history" size={24} color={color} />;
+//           default:
+//             return <FontAwesome5 name="cog" size={24} color={color} />;
 //         }
 
+//         // } else if (route.name === 'Settings') {
+//         //   iconName = 'cogs';
+//         // } else if (route.name === 'Pharmacies') {
+//         //   iconName = 'pharmacy';
+//         // }
+
 //         // You can return any component that you like here!
-//         return (
-//           <MaterialCommunityIcons
-//             name={iconName || 'exclamation'}
-//             size={25}
-//             color={color}
-//           />
-//         );
+//         // return (
+//         //   <MaterialCommunityIcons
+//         //     name={iconName || 'exclamation'}
+//         //     size={25}
+//         //     color={color}
+//         //   />
+//         // );
 //       },
 //     })}
 //   >
 //     <Tabs.Screen name="Rx" component={RxStackScreen} />
-//     <Tabs.Screen name="Pharmacies" component={PharmaciesStackScreen} />
-//     <Tabs.Screen name="Settings" component={SettingsStackScreen} />
 //   </Tabs.Navigator>
 // );
 
 const DrawerScreen = () => (
   <Drawer.Navigator initialRouteName="Rx" drawerContent={() => <Sidebar />}>
     <Drawer.Screen name="Rx" component={RxStackScreen} />
-    <Drawer.Screen name="Pharmacies" component={PharmaciesStackScreen} />
     <Drawer.Screen name="Settings" component={SettingsStackScreen} />
+    <Drawer.Screen name="Profile" component={ProfileStackScreen} />
   </Drawer.Navigator>
 );
 
 const RootStack = createStackNavigator();
+
 const RootStackScreen = (props: any) => {
   const { userToken } = props;
 
@@ -134,6 +174,23 @@ export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const [customer, setCustomer] = useState(null);
+
+  const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
+    onSubscriptionData: ({ client, subscriptionData }) => {
+      const { cartModified } = subscriptionData.data;
+      if (cartModified.ok) {
+        updateCustomer(cartModified.customer);
+      }
+    },
+    fetchPolicy: 'network-only',
+  });
+
+  const updateCustomer = async (customer: any) => {
+    console.log('updateCustomer', customer);
+    setCustomer(customer);
+    await AsyncStorage.setItem('customer', JSON.stringify(customer));
+  };
+
   const authContext = useMemo(() => {
     return {
       getIsStarted: async () => {
@@ -173,6 +230,7 @@ export default () => {
 
   useEffect(() => {
     (async () => {
+      console.log('Navigation useEffect');
       const token = await AsyncStorage.getItem('token');
       const customer = await AsyncStorage.getItem('customer');
       if (token) {
@@ -193,18 +251,16 @@ export default () => {
 
   return (
     <AuthContext.Provider value={authContext}>
-      <CustomerContext.Provider
+      <RxRunrContext.Provider
         value={{
           customer: customer || {},
-          setCustomer: (customer: any) => {
-            setCustomer(customer);
-          },
+          setCustomerContext: updateCustomer,
         }}
       >
         <NavigationContainer>
           <RootStackScreen userToken={userToken} />
         </NavigationContainer>
-      </CustomerContext.Provider>
+      </RxRunrContext.Provider>
     </AuthContext.Provider>
   );
 };
