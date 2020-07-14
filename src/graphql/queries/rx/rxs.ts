@@ -42,7 +42,6 @@ query GetMyRxHistory {
 }`;
 
 export const rxError = (e: ApolloError) => {
-  console.log('rxError: error', e);
   AlertHelper.show('error', 'Error', 'An error occurred and has been logged.');
 };
 
@@ -60,7 +59,6 @@ export const getMyRxHistoryCompleted = (
 
     setRxHistory(rxList);
   } else {
-    console.log('getMyRxHistoryCompleted: error', error);
     AlertHelper.show('error', 'Error', error.message);
   }
   setLoading(false);

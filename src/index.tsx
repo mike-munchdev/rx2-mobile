@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
 import DropdownAlert from 'react-native-dropdownalert';
-import { AppLoading, Asset } from 'expo';
+import { AppLoading } from 'expo';
+import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import {
   FontAwesome,
@@ -34,8 +35,7 @@ export default () => {
   };
 
   const _loadAssetsAsync = async () => {
-    // const imageAssets = cacheImages([require("./assets/bg-2.jpg")]);
-    const imageAssets = cacheImages([]);
+    const imageAssets = cacheImages([require('../assets/logo2.png')]);
 
     const fontAssets = cacheFonts([
       FontAwesome.font,

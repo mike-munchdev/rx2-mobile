@@ -42,6 +42,9 @@ export const customersStructure = `{
     googleId
     facebookId
     createdAt
+    settings {
+      searchDistance
+    }
 }`;
 
 export const GET_CUSTOMER_BY_ID = gql`
@@ -57,7 +60,7 @@ export const GET_CUSTOMER_BY_ID = gql`
 `;
 
 export const UPDATE_CUSTOMER = gql`
-  mutation UpdateCustomer($input: UpdateCustomerInput) {
+  mutation UpdateCustomer($input: UpdateCustomerInput!) {
     updateCustomer(input: $input) {
       ok
       customer ${customersStructure}
@@ -68,8 +71,20 @@ export const UPDATE_CUSTOMER = gql`
   }
 `;
 
+export const UPDATE_CUSTOMER_SETTINGS = gql`
+  mutation UpdateCustomerSettings($input: UpdateCustomerSettingsInput!) {
+    updateCustomerSettings(input: $input) {
+      ok
+      customer ${customersStructure}
+      error {        
+        message
+      }
+    }
+  }
+`;
+
 export const CREATE_CUSTOMER = gql`
-  mutation CreateCustomer($input: CreateCustomerInput) {
+  mutation CreateCustomer($input: CreateCustomerInput!) {
     createCustomer(input: $input) {
       ok
       customer ${customersStructure}
@@ -140,6 +155,18 @@ export const REMOVE_RX_FROM_CART = gql`
   }
 `;
 
+export const REQUEST_REFILL = gql`
+  mutation RequestRefill($input: RequestRefillInput!) {
+    requestRefill(input: $input) {
+      ok
+      customer ${customersStructure}
+      error {
+        message
+      }
+    }
+  }
+`;
+
 export const customerSignupError = (e: ApolloError) => {
   AlertHelper.show(
     'error',
@@ -162,16 +189,15 @@ export const customerSignupCompleted = (
         'No customer found with the given information.'
       );
     } else {
-      // add client info to local cache and move to accounts page
       await signUp(message, navigation);
     }
   } else {
-    console.log('customerSignupCompleted: error', error);
     AlertHelper.show('error', 'Error', error.message);
   }
 };
 
-export const addRxToCartError = (e: ApolloError) => {
+export const addRxToCartError = (setLoading: Function) => (e: ApolloError) => {
+  setLoading(false);
   AlertHelper.show(
     'error',
     'Error',
@@ -183,23 +209,16 @@ export const addRxToCartCompleted = (
   setLoading: Function,
   setCustomer: Function
 ) => async ({ addRxToCart }) => {
-  setLoading(true);
-
   const { ok, customer, error } = addRxToCart;
 
   if (ok) {
+    setLoading(false);
     if (!customer) {
-      setLoading(false);
-
       AlertHelper.show('error', 'Error', 'Error retrieving information.');
     } else {
-      // add client info to local cache and move to accounts page
-      // await signUp(message, navigation);
       setCustomer(customer);
-      setLoading(false);
     }
   } else {
-    console.log('addRxToCartCompleted: error', error);
     setLoading(false);
     AlertHelper.show('error', 'Error', error.message);
   }
@@ -222,13 +241,99 @@ export const removeRxFromCartCompleted = (
         'No customer found with the given information.'
       );
     } else {
-      // add client info to local cache and move to accounts page
-      // await signUp(message, navigation);
       setCustomer(customer);
       setLoading(false);
     }
   } else {
-    console.log('removeRxFromCartCompleted: error', error);
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
+
+export const requestRefillError = (setLoading: Function) => (
+  e: ApolloError
+) => {
+  AlertHelper.show('error', 'Error', e.message);
+};
+
+export const requestRefillCompleted = (
+  setLoading: Function,
+  setCustomer: Function
+) => async ({ requestRefill }) => {
+  const { ok, customer, error } = requestRefill;
+
+  if (ok) {
+    AlertHelper.show(
+      'success',
+      'Success!',
+      'Your refill was received and will be processed shortly.'
+    );
+    setLoading(false);
+    setTimeout(() => {
+      setCustomer(customer);
+    }, 5000);
+  } else {
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
+
+export const updateCustomerError = (setLoading: Function) => (
+  e: ApolloError
+) => {
+  setLoading(false);
+  AlertHelper.show(
+    'error',
+    'Error',
+    'An error occurred adding Rx to cart. Please try again.'
+  );
+};
+
+export const updateCustomerCompleted = (
+  setLoading: Function,
+  setCustomer: Function
+) => async ({ updateCustomer }) => {
+  const { ok, customer, error } = updateCustomer;
+
+  if (ok) {
+    setLoading(false);
+    if (!customer) {
+      AlertHelper.show('error', 'Error', 'Error retrieving information.');
+    } else {
+      AlertHelper.show('success', 'Success', 'Information saved.');
+      setCustomer(customer);
+    }
+  } else {
+    setLoading(false);
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
+
+export const updateCustomerSettingsError = (setLoading: Function) => (
+  e: ApolloError
+) => {
+  setLoading(false);
+  AlertHelper.show(
+    'error',
+    'Error',
+    'An error occurred adding Rx to cart. Please try again.'
+  );
+};
+
+export const updateCustomerSettingsCompleted = (
+  setLoading: Function,
+  setCustomer: Function
+) => async ({ updateCustomerSettings }) => {
+  const { ok, customer, error } = updateCustomerSettings;
+
+  if (ok) {
+    setLoading(false);
+    if (!customer) {
+      AlertHelper.show('error', 'Error', 'Error retrieving information.');
+    } else {
+      AlertHelper.show('success', 'Success', 'Information saved.');
+      setCustomer(customer);
+    }
+  } else {
+    setLoading(false);
     AlertHelper.show('error', 'Error', error.message);
   }
 };

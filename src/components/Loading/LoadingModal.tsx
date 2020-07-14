@@ -29,7 +29,6 @@ const LoadingModal: FC<ILoadingModalProps> = ({ isVisible, animationType }) => {
     <Modal
       animationType={animationType || 'fade'}
       supportedOrientations={['landscape', 'portrait']}
-      transparent
       visible={isVisible}
     >
       <View style={styles.loadingContainer}>

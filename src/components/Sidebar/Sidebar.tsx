@@ -16,7 +16,7 @@ const Sidebar = () => {
   const { signOut } = useContext(AuthContext);
   const { customer } = useContext(RxRunrContext);
   const navigation = useNavigation();
-  console.log('Sidebar: customer', customer);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ marginLeft: 10, marginBottom: 20 }}>

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-
-import styles from './styles';
 import { useNavigation } from '@react-navigation/native';
+import styles from './styles';
 
 const NewRx = () => {
   const navigation = useNavigation();
@@ -12,7 +11,7 @@ const NewRx = () => {
         style={{ backgroundColor: 'white', padding: 20 }}
         onPress={() => navigation.pop()}
       >
-        <Text>NewRx</Text>
+        <Text>Coming Soon</Text>
       </TouchableOpacity>
     </View>
   );

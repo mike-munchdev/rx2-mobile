@@ -23,6 +23,7 @@ import { AlertHelper } from '../../utils/alert';
 import { RoundedIconButton } from '../Buttons';
 import { HorizontalRule } from '../HorizontalRule';
 import { RxRunrContext } from '../../config/context';
+import { ConfirmDialog } from 'react-native-simple-dialogs';
 
 export interface IShoppingCartListProps {
   customer: any;
@@ -36,6 +37,8 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
 }) => {
   const [rxHistory, setShoppingCartList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [currentItem, setCurrentItem] = useState(null);
   const { setCustomerContext } = useContext(RxRunrContext);
 
   const [removeRxFromCart] = useMutation(REMOVE_RX_FROM_CART, {
@@ -68,11 +71,8 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
               borderWidth={1}
               iconColor={colors.red.normal}
               onPress={async () => {
-                const result = await removeRxFromCart({
-                  variables: {
-                    input: { rxId: item.id, customerId: customer.id },
-                  },
-                });
+                setCurrentItem(item);
+                setShowConfirm(true);
               }}
             >
               <FontAwesome5
@@ -88,16 +88,57 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
   };
 
   return (
-    <View style={styles.flatList}>
-      <FlatList
-        data={customer.cart}
-        renderItem={renderItem}
-        keyExtractor={(item, index) => item.id}
-        ItemSeparatorComponent={() => (
-          <HorizontalRule styles={{ marginHorizontal: 10 }} />
-        )}
+    <Fragment>
+      <ConfirmDialog
+        title="Delete Rx"
+        message="Are you sure you want to delete?"
+        onTouchOutside={() => setShowConfirm(false)}
+        visible={showConfirm}
+        negativeButton={{
+          title: 'NO',
+          onPress: () => {
+            setCurrentItem(false);
+            setShowConfirm(false);
+          },
+          disabled: false,
+          titleStyle: {
+            color: 'blue',
+            colorDisabled: 'aqua',
+          },
+          style: {
+            backgroundColor: 'transparent',
+            backgroundColorDisabled: 'transparent',
+          },
+        }}
+        positiveButton={{
+          title: 'YES',
+          onPress: async () => {
+            const result = await removeRxFromCart({
+              variables: {
+                input: { rxId: currentItem.id, customerId: customer.id },
+              },
+            });
+            setCurrentItem(null);
+          },
+        }}
       />
-    </View>
+
+      <View style={styles.flatList}>
+        <FlatList
+          data={customer.cart}
+          renderItem={renderItem}
+          keyExtractor={(item, index) => item.id}
+          ItemSeparatorComponent={() => (
+            <HorizontalRule styles={{ marginHorizontal: 10 }} />
+          )}
+          ListEmptyComponent={() => (
+            <View>
+              <Text>No Records Found</Text>
+            </View>
+          )}
+        />
+      </View>
+    </Fragment>
   );
 };
 export default ShoppingCartList;

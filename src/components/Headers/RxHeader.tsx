@@ -49,10 +49,10 @@ const RxHeader: FC<IRxHeaderProps> = ({ title }) => {
           >
             <View style={styles.headerCenterView}>
               <Text style={styles.pharmacyName}>
-                {pharmacy ? pharmacy.pharmacyName : 'CLICK TO'}
+                {pharmacy ? pharmacy.name : 'CLICK TO'}
               </Text>
               <Text style={styles.pharmacyAddress}>
-                {pharmacy ? pharmacy.address : 'SELECT PHARMACY'}
+                {pharmacy ? pharmacy.address.streetInfo : 'SELECT PHARMACY'}
               </Text>
             </View>
           </TouchableOpacity>

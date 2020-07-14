@@ -26,10 +26,11 @@ import { signinSchema } from '../../validation/signin';
 import { DismissKeyboard } from '../../components/TextInput';
 import AnimatableTextInput from '../../components/TextInput/AnimatableTextInput';
 import { AuthContext } from '../../config/context';
+import { useServerInfo } from '../../hooks/serverInfo';
 
 const SignIn: FC = () => {
   const { signIn, isLoggedIn } = useContext(AuthContext);
-
+  const [httpLinkUri, wsLinkUri] = useServerInfo();
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -90,6 +91,7 @@ const SignIn: FC = () => {
               return (
                 <Fragment>
                   <View>
+                    <Text>{httpLinkUri}</Text>
                     <AnimatableTextInput
                       label="E-MAIL"
                       placeholder="Enter email"
@@ -106,7 +108,7 @@ const SignIn: FC = () => {
                       placeholder="Enter password"
                       iconName="lock"
                       name="password"
-                      value={values.email}
+                      value={values.password}
                       errors={errors}
                       touched={touched}
                       handleChange={handleChange('password')}

@@ -7,7 +7,9 @@ const logoHeight = height * 0.7 * 0.4;
 export default StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.blue.dark,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
   },
   header: {
     flex: 2,

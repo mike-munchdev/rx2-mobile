@@ -26,8 +26,12 @@ export default StyleSheet.create({
   leftItemContent: {
     flex: 1,
   },
+  rightItemContent: {
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
   text: {
-    color: colors.white.normal,
+    color: colors.blue.dark,
   },
   drugText: {
     fontWeight: 'bold',
@@ -50,10 +54,7 @@ export default StyleSheet.create({
     fontSize: 16,
     marginBottom: 5,
   },
-  rightItemContent: {
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-  },
+
   button: {
     width: 30,
     height: 30,

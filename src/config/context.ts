@@ -15,14 +15,14 @@ export const AuthContext = createContext({
 
 export const RxRunrContext = createContext({
   setCustomerContext: (customer: any) => {},
-  customer: {},
+  customer: {} | null,
 
   setPharmacyContext: (pharmacy: any) => {},
-  pharmacy: {},
+  pharmacy: {} | null,
 
   setLocationContext: (location: any) => {},
-  location: {},
+  location: {} | null,
 
   setPaymentMethodContext: (paymentMethod: any) => {},
-  paymentMethod: {},
+  paymentMethod: {} | null,
 });

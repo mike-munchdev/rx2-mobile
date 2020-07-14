@@ -14,12 +14,33 @@ import { RxRunrContext } from '../../config/context';
 import { HorizontalRule } from '../../components/HorizontalRule';
 import colors from '../../constants/colors';
 import EmptyCart from '../../components/ShoppingCart/EmptyCart';
+import { ButtonGroup } from 'react-native-elements';
+import { useMutation } from '@apollo/react-hooks';
+import {
+  REQUEST_REFILL,
+  requestRefillError,
+  requestRefillCompleted,
+} from '../../graphql/queries/customer/customer';
 
 const ShoppingCart = () => {
+  const [deliveryMethodIndex, setDeliveryMethodIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const buttons = ['Pickup', 'Delivery'];
+
   const navigation = useNavigation();
-  const { customer, pharmacy, location, paymentMethod } = useContext(
-    RxRunrContext
-  );
+  const {
+    customer,
+    pharmacy,
+    location,
+    paymentMethod,
+    setCustomerContext,
+  } = useContext(RxRunrContext);
+
+  const [requestRefill] = useMutation(REQUEST_REFILL, {
+    fetchPolicy: 'no-cache',
+    onError: requestRefillError(setIsLoading),
+    onCompleted: requestRefillCompleted(setIsLoading, setCustomerContext),
+  });
 
   if (!customer.cart || customer.cart.length === 0) navigation.pop();
 
@@ -32,11 +53,19 @@ const ShoppingCart = () => {
           pharmacy={pharmacy}
           location={location}
         />
+
+        <ButtonGroup
+          onPress={(selectedIndex) => setDeliveryMethodIndex(selectedIndex)}
+          selectedIndex={deliveryMethodIndex}
+          buttons={buttons}
+          containerStyle={{ height: 50 }}
+          selectedButtonStyle={{ backgroundColor: colors.blue.dark }}
+        />
         <HorizontalRule styles={{ marginHorizontal: 10 }} />
         <View style={styles.orderInfoView}>
-          <ItemsTotal cart={customer.cart} />
+          {/* <ItemsTotal cart={customer.cart} />
           <DeliveryCharge cart={customer.cart} pharmacy={pharmacy} />
-          <OrderTotal cart={customer.cart} pharmacy={pharmacy} />
+          <OrderTotal cart={customer.cart} pharmacy={pharmacy} /> */}
         </View>
         <View
           style={{
@@ -54,8 +83,16 @@ const ShoppingCart = () => {
               height: 50,
               justifyContent: 'center',
               alignItems: 'center',
-              // // flex: 1,
-              // flexDirection: 'row',
+            }}
+            onPress={async () => {
+              const result = await requestRefill({
+                variables: {
+                  input: {
+                    customerId: customer.id,
+                    isDelivery: deliveryMethodIndex === 1,
+                  },
+                },
+              });
             }}
           >
             <Text

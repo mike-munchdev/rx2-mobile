@@ -2,16 +2,14 @@ import React, { useState, useEffect, Fragment, useContext } from 'react';
 
 import { Text, View, FlatList, TouchableOpacity, Modal } from 'react-native';
 import moment from 'moment';
-import styles from './styles';
-import { useFakeRefills } from '../../hooks/fakeData';
 
-import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 import { useLazyQuery, useMutation } from '@apollo/react-hooks';
+import { ProgressDialog } from 'react-native-simple-dialogs';
 import colors from '../../constants/colors';
 import { truncate } from '../../utils/strings';
-
+import styles from './styles';
 import {
   GET_MY_RX_HISTORY,
   rxError,
@@ -29,6 +27,7 @@ import { RxHeader } from '../Headers';
 import { useNavigation } from '@react-navigation/native';
 import { RoundedIconButton } from '../Buttons';
 import { color } from 'react-native-reanimated';
+import { Card } from 'react-native-elements';
 
 const RxHistory = () => {
   const [rxHistory, setRxHistory] = useState([]);
@@ -37,7 +36,7 @@ const RxHistory = () => {
 
   const [addRxToCart] = useMutation(ADD_RX_TO_CART, {
     fetchPolicy: 'no-cache',
-    onError: addRxToCartError,
+    onError: addRxToCartError(setIsLoading),
     onCompleted: addRxToCartCompleted(setIsLoading, setCustomerContext),
   });
 
@@ -61,8 +60,6 @@ const RxHistory = () => {
         : moment(item.filledDate);
     const nextFillDate = moment(lastFilledDate).add(item.daySupply, 'days');
     const today = moment();
-    // console.log('today', today);
-    // console.log('nextFillDate', nextFillDate);
 
     const daysUntilNextRefill = today.diff(nextFillDate, 'days');
 
@@ -77,11 +74,7 @@ const RxHistory = () => {
     const nextFillDate = moment(lastFilledDate).add(item.daySupply, 'days');
     const displayAddToCart = shouldDisplayAddToCartButton(item, customer.cart);
     return (
-      <LinearGradient
-        colors={colors.blue.buttonGradientDark}
-        start={{ x: 0, y: 1 }}
-        style={styles.item}
-      >
+      <Card>
         <View style={styles.itemContainer}>
           <View style={styles.leftItemContent}>
             <Text style={[styles.text, styles.drugText]}>
@@ -132,6 +125,7 @@ const RxHistory = () => {
                   //     'The Rx is already in your cart'
                   //   );
                   // } else {
+                  setIsLoading(true);
                   const result = await addRxToCart({
                     variables: {
                       input: { rxId: item.id, quantity: 1 },
@@ -149,7 +143,7 @@ const RxHistory = () => {
             ) : null}
           </View>
         </View>
-      </LinearGradient>
+      </Card>
     );
   };
 
@@ -157,12 +151,22 @@ const RxHistory = () => {
 
   return (
     <Fragment>
-      <LoadingModal isVisible={isLoading} animationType="none" />
+      <ProgressDialog
+        visible={isLoading}
+        message="Loading..."
+        activityIndicatorColor={colors.blue.dark}
+        activityIndicatorSize="large"
+      />
       <View style={styles.flatList}>
         <FlatList
           data={rxHistory}
           renderItem={renderItem}
           keyExtractor={(item, index) => item.id}
+          ListEmptyComponent={() => (
+            <View>
+              <Text>No Records Found</Text>
+            </View>
+          )}
         />
       </View>
     </Fragment>

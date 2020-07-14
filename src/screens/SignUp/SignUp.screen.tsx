@@ -104,7 +104,7 @@ const SignUp: FC = () => {
                     <AnimatableTextInput
                       label="E-MAIL"
                       placeholder="Enter email"
-                      iconName="user-o"
+                      iconName="envelope-o"
                       name="email"
                       value={values.email}
                       errors={errors}

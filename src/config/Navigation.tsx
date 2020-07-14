@@ -174,6 +174,8 @@ export default () => {
   const [isLoading, setIsLoading] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const [customer, setCustomer] = useState(null);
+  const [location, setLocation] = useState(null);
+  const [pharmacy, setPharmacy] = useState(null);
 
   // const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
   //   onSubscriptionData: ({ client, subscriptionData }) => {
@@ -186,9 +188,20 @@ export default () => {
   // });
 
   const updateCustomer = async (customer: any) => {
-    console.log('updateCustomer', customer);
+    // console.log('updateCustomer', customer);
     setCustomer(customer);
     await AsyncStorage.setItem('customer', JSON.stringify(customer));
+  };
+
+  const updateLocation = async (location: any) => {
+    // console.log('updateLocation', location);
+    setLocation(location);
+    await AsyncStorage.setItem('location', JSON.stringify(location));
+  };
+  const updatePharmacy = async (pharmacy: any) => {
+    // console.log('updatePharmacy', pharmacy);
+    setPharmacy(pharmacy);
+    await AsyncStorage.setItem('pharmacy', JSON.stringify(pharmacy));
   };
 
   const authContext = useMemo(() => {
@@ -217,9 +230,13 @@ export default () => {
         await AsyncStorage.removeItem('token');
         await AsyncStorage.removeItem('isLoggedIn');
         await AsyncStorage.removeItem('customer');
+        await AsyncStorage.removeItem('location');
+        await AsyncStorage.removeItem('pharmacy');
         setIsLoading(false);
         setUserToken(null);
         setCustomer(null);
+        setLocation(null);
+        setPharmacy(null);
       },
       isLoggedIn: async () => {
         const isLoggedIn = await AsyncStorage.getItem('isLoggedIn');
@@ -230,14 +247,17 @@ export default () => {
 
   useEffect(() => {
     (async () => {
-      console.log('Navigation useEffect');
       const token = await AsyncStorage.getItem('token');
       const customer = await AsyncStorage.getItem('customer');
+      const pharmacy = await AsyncStorage.getItem('pharmacy');
       if (token) {
         setUserToken(token);
       }
       if (customer) {
         setCustomer(JSON.parse(customer));
+      }
+      if (pharmacy) {
+        setPharmacy(JSON.parse(pharmacy));
       }
       setTimeout(() => {
         setIsLoading(false);
@@ -253,8 +273,12 @@ export default () => {
     <AuthContext.Provider value={authContext}>
       <RxRunrContext.Provider
         value={{
-          customer: customer || {},
+          customer: customer,
           setCustomerContext: updateCustomer,
+          location: location,
+          setLocationContext: updateLocation,
+          pharmacy: pharmacy,
+          setPharmacyContext: updatePharmacy,
         }}
       >
         <NavigationContainer>

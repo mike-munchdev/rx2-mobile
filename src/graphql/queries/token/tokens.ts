@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 import { ApolloError } from 'apollo-client';
 import { AlertHelper } from '../../../utils/alert';
+import { customersStructure } from '../customer/customer';
 
 export const GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD = gql`
   query GetCustomerTokenByEmailAndPassword(
@@ -10,25 +11,8 @@ export const GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD = gql`
     getCustomerTokenByEmailAndPassword(email: $email, password: $password) {
       ok
       token
-      customer {
-        id
-        firstName
-        lastName
-        thumbnailUri
-        cart {
-          id
-          rx {
-            id
-            rxNumber
-            drug {
-              id
-              brand_name
-            }
-          }
-          price
-          quantity
-        }
-      }
+      customer ${customersStructure}
+      
       error {
         message
       }
@@ -56,11 +40,9 @@ export const getCustomerTokenByEmailAndPasswordCompleted = (
         'No customer found with the given information.'
       );
     } else {
-      // add client info to local cache and move to accounts page
       await signIn(token, customer);
     }
   } else {
-    console.log('getCustomerTokenByEmailAndPassword: error', error);
     AlertHelper.show('error', 'Error', error.message);
   }
 };

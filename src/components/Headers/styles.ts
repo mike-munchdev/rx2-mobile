@@ -4,7 +4,7 @@ import { isIphoneX } from '../../utils/iPhone';
 
 const getHeight = (): string | number => {
   const isPhoneX = isIphoneX();
-  console.log('isPhoneX', isPhoneX);
+
   return isPhoneX ? 100 : 80;
 };
 export default StyleSheet.create({
