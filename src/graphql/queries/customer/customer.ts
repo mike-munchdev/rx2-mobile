@@ -125,7 +125,7 @@ export const CUSTOMER_SIGNUP = gql`
   mutation CustomerSignup($input: CustomerSignupInput!) {
     customerSignup(input: $input) {
       ok
-      customer ${customersStructure}
+      message
       error {
         message
       }
@@ -168,6 +168,7 @@ export const REQUEST_REFILL = gql`
 `;
 
 export const customerSignupError = (e: ApolloError) => {
+  console.log('e', e);
   AlertHelper.show(
     'error',
     'Error',
