@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Text, View } from 'react-native';
 
+import { Text, View } from 'react-native';
 
 import styles from './styles';
 

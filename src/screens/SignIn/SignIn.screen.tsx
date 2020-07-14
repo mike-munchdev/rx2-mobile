@@ -17,26 +17,25 @@ import {
   GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD,
   getCustomerTokenByEmailAndPasswordCompleted,
   getCustomerTokenByEmailAndPasswordError,
-} from '../../graphql/queries/tokens';
+} from '../../graphql/queries/token/tokens';
 import styles from './styles';
 import colors from '../../constants/colors';
 
 import { signinSchema } from '../../validation/signin';
-import { useCustomerInfo, useLoggedIn } from '../../hooks/customerInfo';
+
 import { DismissKeyboard } from '../../components/TextInput';
 import AnimatableTextInput from '../../components/TextInput/AnimatableTextInput';
 import { AuthContext } from '../../config/context';
+import { useServerInfo } from '../../hooks/serverInfo';
 
 const SignIn: FC = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { signIn } = useContext(AuthContext);
-
+  const { signIn, isLoggedIn } = useContext(AuthContext);
+  const [httpLinkUri, wsLinkUri] = useServerInfo();
   const navigation = useNavigation();
 
   useEffect(() => {
     (async () => {
-      const isLoggedIn = await useLoggedIn();
-      setIsLoggedIn(Boolean(isLoggedIn));
+      const isUserLoggedIn = await isLoggedIn();
     })();
   }, []);
 
@@ -92,6 +91,7 @@ const SignIn: FC = () => {
               return (
                 <Fragment>
                   <View>
+                    <Text>{httpLinkUri}</Text>
                     <AnimatableTextInput
                       label="E-MAIL"
                       placeholder="Enter email"
@@ -108,7 +108,7 @@ const SignIn: FC = () => {
                       placeholder="Enter password"
                       iconName="lock"
                       name="password"
-                      value={values.email}
+                      value={values.password}
                       errors={errors}
                       touched={touched}
                       handleChange={handleChange('password')}

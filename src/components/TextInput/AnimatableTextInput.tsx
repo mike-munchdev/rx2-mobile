@@ -55,6 +55,7 @@ const AnimatableTextInput: FC<ITextInputProps> = ({
           secureTextEntry={secureTextEntry}
           onChangeText={handleChange}
           autoCapitalize="none"
+          value={value}
         />
         {secureTextVisible ? (
           <TouchableOpacity

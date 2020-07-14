@@ -24,7 +24,7 @@ import {
   customerSignupError,
   customerSignupCompleted,
   CUSTOMER_SIGNUP,
-} from '../../graphql/queries/customers';
+} from '../../graphql/queries/customer/customer';
 
 const SignUp: FC = () => {
   const [checkTextInputChange, setCheckTextInputChange] = useState(false);
@@ -49,18 +49,13 @@ const SignUp: FC = () => {
         behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         enabled
       >
-        <View style={styles.header}>
-          <Animatable.Image
-            animation="bounceIn"
-            source={require('../../../assets/logo2.png')}
-            style={styles.logo}
-            resizeMode="stretch"
-          />
-        </View>
+        <View style={styles.header}></View>
         <Animatable.View animation="fadeInUpBig" style={styles.footer}>
           <Formik
             initialValues={{
               email: '',
+              firstName: '',
+              lastName: '',
               password: '',
               passwordConfirmation: '',
             }}
@@ -70,7 +65,6 @@ const SignUp: FC = () => {
               const result = await customerSignup({
                 variables: { input: { email, password } },
               });
-              
             }}
           >
             {({
@@ -87,14 +81,36 @@ const SignUp: FC = () => {
                 <Fragment>
                   <View>
                     <AnimatableTextInput
+                      label="FIRST NAME"
+                      placeholder="Enter First Name"
+                      iconName="user-o"
+                      name="firstName"
+                      value={values.firstName}
+                      errors={errors}
+                      touched={touched}
+                      handleChange={handleChange('firstName')}
+                    />
+                    <AnimatableTextInput
+                      label="LAST NAME"
+                      placeholder="Enter Last Name"
+                      iconName="user-o"
+                      name="lastName"
+                      value={values.lastName}
+                      errors={errors}
+                      touched={touched}
+                      handleChange={handleChange('lastName')}
+                      headerStyles={{ marginTop: 35 }}
+                    />
+                    <AnimatableTextInput
                       label="E-MAIL"
                       placeholder="Enter email"
-                      iconName="user-o"
+                      iconName="envelope-o"
                       name="email"
                       value={values.email}
                       errors={errors}
                       touched={touched}
                       handleChange={handleChange('email')}
+                      headerStyles={{ marginTop: 35 }}
                     />
                     <AnimatableTextInput
                       label="PASSWORD"

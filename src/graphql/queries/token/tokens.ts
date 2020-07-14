@@ -1,10 +1,7 @@
 import gql from 'graphql-tag';
-import { useContext } from 'react';
-
 import { ApolloError } from 'apollo-client';
-import { AuthContext } from '../../config/context';
-import DropdownAlert from 'react-native-dropdownalert';
-import { AlertHelper } from '../../utils/alert';
+import { AlertHelper } from '../../../utils/alert';
+import { customersStructure } from '../customer/customer';
 
 export const GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD = gql`
   query GetCustomerTokenByEmailAndPassword(
@@ -14,6 +11,8 @@ export const GET_CUSTOMER_TOKEN_BY_EMAIL_AND_PASSWORD = gql`
     getCustomerTokenByEmailAndPassword(email: $email, password: $password) {
       ok
       token
+      customer ${customersStructure}
+      
       error {
         message
       }
@@ -30,9 +29,9 @@ export const getCustomerTokenByEmailAndPasswordError = (e: ApolloError) => {
 };
 
 export const getCustomerTokenByEmailAndPasswordCompleted = (
-  signIn: (token: string) => void
+  signIn: (token: string, customer: any) => void
 ) => async ({ getCustomerTokenByEmailAndPassword }) => {
-  const { ok, token, error } = getCustomerTokenByEmailAndPassword;
+  const { ok, token, customer, error } = getCustomerTokenByEmailAndPassword;
   if (ok) {
     if (!token) {
       AlertHelper.show(
@@ -41,8 +40,7 @@ export const getCustomerTokenByEmailAndPasswordCompleted = (
         'No customer found with the given information.'
       );
     } else {
-      // add client info to local cache and move to accounts page
-      await signIn(token);
+      await signIn(token, customer);
     }
   } else {
     AlertHelper.show('error', 'Error', error.message);
