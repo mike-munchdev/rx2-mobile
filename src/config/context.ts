@@ -1,4 +1,5 @@
 import React, { createContext } from 'react';
+import { INewRx } from '../screens/NewRx/NewRx.screen';
 
 export const AuthContext = createContext({
   signIn: async (token: string) => {},
@@ -15,14 +16,19 @@ export const AuthContext = createContext({
 
 export const RxRunrContext = createContext({
   setCustomerContext: (customer: any) => {},
-  customer: {} | null,
+  customer: null,
 
   setPharmacyContext: (pharmacy: any) => {},
-  pharmacy: {} | null,
+  pharmacy: null,
 
   setLocationContext: (location: any) => {},
-  location: {} | null,
+  location: null,
 
   setPaymentMethodContext: (paymentMethod: any) => {},
-  paymentMethod: {} | null,
+  paymentMethod: null,
+
+  addNewRxToContext: (rx: INewRx) => {},
+  removeNewRxFromContext: (id: string) => {},
+  clearNewRxContext: () => {},
+  newRx: [],
 });

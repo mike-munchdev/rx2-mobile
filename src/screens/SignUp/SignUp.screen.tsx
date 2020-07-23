@@ -49,7 +49,7 @@ const SignUp: FC = () => {
         behavior={Platform.OS == 'ios' ? 'padding' : 'height'}
         enabled
       >
-        <View style={styles.header}></View>
+        {/* <View style={styles.header}></View> */}
         <Animatable.View animation="fadeInUpBig" style={styles.footer}>
           <Formik
             initialValues={{

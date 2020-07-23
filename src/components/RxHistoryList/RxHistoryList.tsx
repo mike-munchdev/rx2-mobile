@@ -28,6 +28,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RoundedIconButton } from '../Buttons';
 import { color } from 'react-native-reanimated';
 import { Card } from 'react-native-elements';
+import { NoRecords } from '../NoRecords';
 
 const RxHistory = () => {
   const [rxHistory, setRxHistory] = useState([]);
@@ -115,23 +116,12 @@ const RxHistory = () => {
                 iconColor={colors.blue.light}
                 borderWidth={1}
                 onPress={async () => {
-                  // const cartIndex = customer.cart.findIndex(
-                  //   (c: any) => c.rx.id === item.id
-                  // );
-                  // if (cartIndex >= 0) {
-                  //   AlertHelper.show(
-                  //     'warn',
-                  //     'Duplicate Rx',
-                  //     'The Rx is already in your cart'
-                  //   );
-                  // } else {
                   setIsLoading(true);
                   const result = await addRxToCart({
                     variables: {
                       input: { rxId: item.id, quantity: 1 },
                     },
                   });
-                  // }
                 }}
               >
                 <FontAwesome5
@@ -147,8 +137,6 @@ const RxHistory = () => {
     );
   };
 
-  // if (isLoading) return <Loading />;
-
   return (
     <Fragment>
       <ProgressDialog
@@ -157,18 +145,17 @@ const RxHistory = () => {
         activityIndicatorColor={colors.blue.dark}
         activityIndicatorSize="large"
       />
-      <View style={styles.flatList}>
-        <FlatList
-          data={rxHistory}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => item.id}
-          ListEmptyComponent={() => (
-            <View>
-              <Text>No Records Found</Text>
-            </View>
-          )}
-        />
-      </View>
+      {!isLoading && rxHistory.length === 0 ? (
+        <NoRecords text="No Rx Found" />
+      ) : (
+        <View style={styles.flatList}>
+          <FlatList
+            data={rxHistory}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => item.id}
+          />
+        </View>
+      )}
     </Fragment>
   );
 };

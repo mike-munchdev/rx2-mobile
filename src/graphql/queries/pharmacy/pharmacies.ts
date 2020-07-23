@@ -86,10 +86,10 @@ export const getPharmaciesNearLocationCompleted = (
 
   if (ok) {
     const pharmacyList = sortByFieldName(pharmacies, 'distance', 'asc');
-
     setPharmacies(pharmacyList);
+    setLoading(false);
   } else {
+    setLoading(false);
     AlertHelper.show('error', 'Error', error.message);
   }
-  setLoading(false);
 };

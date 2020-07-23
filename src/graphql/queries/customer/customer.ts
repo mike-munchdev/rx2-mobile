@@ -143,6 +143,17 @@ export const ADD_RX_TO_CART = gql`
     }
   }
 `;
+export const ADD_NEW_RXS_TO_QUEUE = gql`
+  mutation AddNewRxsToQueue($input: AddNewRxsToQueueInput!) {
+    addNewRxsToQueue(input: $input) {
+      ok
+      customer ${customersStructure}
+      error {
+        message
+      }
+    }
+  }
+`;
 export const REMOVE_RX_FROM_CART = gql`
   mutation RemoveRxFromCart($input: RemoveRxFromCartInput!) {
     removeRxFromCart(input: $input) {
@@ -166,6 +177,55 @@ export const REQUEST_REFILL = gql`
     }
   }
 `;
+
+export const UPLOAD_RX_PHOTO = gql`
+  mutation UploadRxPhoto($file: Upload!) {
+    uploadRxPhoto(file: $file) {
+      ok
+      message
+      error {
+        message
+      }
+    }
+  }
+`;
+
+export const ADD_PUSH_TOKEN = gql`
+  mutation AddPushToken($input: AddPushToken!) {
+    addPushToken(input: $input) {
+      ok
+      customer ${customersStructure}
+      error {
+        message
+      }
+    }
+  }
+`;
+
+export const uploadRxPhotoError = (setLoading: Function) => (
+  e: ApolloError
+) => {
+  console.log('e', e);
+  setLoading(false);
+  AlertHelper.show(
+    'error',
+    'Error',
+    'An error occurred during upload. Please try again.'
+  );
+};
+
+export const uploadRxPhotoCompleted = (setLoading: Function) => async ({
+  uploadRxPhoto,
+}) => {
+  const { ok, message, error } = uploadRxPhoto;
+  setLoading(false);
+  if (ok) {
+    AlertHelper.show('success', 'Upload Successful.', message);
+  } else {
+    setLoading(false);
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
 
 export const customerSignupError = (e: ApolloError) => {
   console.log('e', e);
@@ -324,6 +384,67 @@ export const updateCustomerSettingsCompleted = (
   setCustomer: Function
 ) => async ({ updateCustomerSettings }) => {
   const { ok, customer, error } = updateCustomerSettings;
+
+  if (ok) {
+    setLoading(false);
+    if (!customer) {
+      AlertHelper.show('error', 'Error', 'Error retrieving information.');
+    } else {
+      AlertHelper.show('success', 'Success', 'Information saved.');
+      setCustomer(customer);
+    }
+  } else {
+    setLoading(false);
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
+
+export const addNewRxsToQueueError = (setLoading: Function) => (
+  e: ApolloError
+) => {
+  setLoading(false);
+  AlertHelper.show(
+    'error',
+    'Error',
+    'An error occurred adding Rx to cart. Please try again.'
+  );
+};
+
+export const addNewRxsToQueueCompleted = (
+  setLoading: Function,
+  setCustomer: Function,
+  clearNewRxQueue: Function
+) => async ({ addNewRxsToQueue }) => {
+  const { ok, customer, error } = addNewRxsToQueue;
+
+  if (ok) {
+    setLoading(false);
+    if (!customer) {
+      AlertHelper.show('error', 'Error', 'Error retrieving information.');
+    } else {
+      setCustomer(customer);
+      clearNewRxQueue();
+    }
+  } else {
+    setLoading(false);
+    AlertHelper.show('error', 'Error', error.message);
+  }
+};
+
+export const addPushTokenError = (setLoading: Function) => (e: ApolloError) => {
+  setLoading(false);
+  AlertHelper.show(
+    'error',
+    'Error',
+    'An error occurred adding Rx to cart. Please try again.'
+  );
+};
+
+export const addPushTokenCompleted = (
+  setLoading: Function,
+  setCustomer: Function
+) => async ({ addPushToken }) => {
+  const { ok, customer, error } = addPushToken;
 
   if (ok) {
     setLoading(false);

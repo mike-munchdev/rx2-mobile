@@ -9,7 +9,7 @@ export default StyleSheet.create({
     backgroundColor: colors.blue.dark,
   },
   header: {
-    flex: 3,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },

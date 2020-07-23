@@ -1,7 +1,7 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
 import DropdownAlert from 'react-native-dropdownalert';
-import { AppLoading } from 'expo';
+import { AppLoading, Linking } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import {
@@ -10,6 +10,7 @@ import {
   Feather,
   MaterialIcons,
 } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
 
 import Navigation from './config/Navigation';
 import client from './graphql/client';
@@ -66,6 +67,7 @@ export default () => {
           AlertHelper.setDropDown(ref);
         }}
         onClose={() => AlertHelper.invokeOnClose()}
+        onTap={() => AlertHelper.invokeOnTap()}
       />
     </ApolloProvider>
   );

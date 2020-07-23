@@ -31,11 +31,13 @@ const RxHistory = () => {
         >
           <RoundedIconButton
             size={60}
-            borderColor={colors.blue.sky}
+            borderColor={colors.blue.dark}
             backgroundColor={colors.white.normal}
             iconName="prescription-bottle-alt"
             iconSize={36}
+            iconColor={colors.blue.dark}
             onPress={() => navigation.navigate('NewRx')}
+            text="Add New Rx"
           />
         </View>
       </View>

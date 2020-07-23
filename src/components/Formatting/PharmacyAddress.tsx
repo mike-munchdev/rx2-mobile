@@ -7,9 +7,13 @@ import colors from '../../constants/colors';
 
 const PharmacyAddress: FC<IPharmacyFormatProps> = ({ pharmacy }) => {
   const { address } = pharmacy;
+  console.log('address', address);
+  if (!address) return <View></View>;
   return (
     <View>
-      <Text style={{ color: colors.blue.dark }}>{`${address.streetInfo}`}</Text>
+      <Text style={{ color: colors.blue.dark }}>{`${
+        address.streetInfo || ''
+      }`}</Text>
       {address.unitInfo ? (
         <Text style={{ color: colors.blue.dark }}>{`${address.unitInfo}`}</Text>
       ) : null}

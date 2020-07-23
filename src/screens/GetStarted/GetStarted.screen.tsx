@@ -33,12 +33,12 @@ const GetStarted = () => {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" />
       <View style={styles.header}>
-        <Animatable.Image
+        {/* <Animatable.Image
           animation="bounceIn"
           source={require('../../../assets/logo2.png')}
           style={styles.logo}
           resizeMode="stretch"
-        />
+        /> */}
       </View>
       <Animatable.View animation="fadeInUpBig" style={styles.footer}>
         <Text style={styles.title}>Get your Rx delivered to your door!</Text>

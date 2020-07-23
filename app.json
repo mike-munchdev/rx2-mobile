@@ -7,7 +7,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-old.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -31,28 +31,37 @@
           "httpProtocol": "https",
           "wsProtocol": "wss",
           "drugSearchLimit": 20,
-          "jwtSecret": "as;ledasoi43poiap[iohakj23-9*_()"
+          "jwtSecret": "as;ledasoi43poiap[iohakj23-9*_()",
+          "mediaServerUrl": "https://api.cloudinary.com/v1_1/munch-development-llc/upload",
+          "uploadPreset": "uqyed4ti"
         },
         "heroku-test": {
           "apiServerUrl": "rxrunr-api-test.herokuapp.com",
           "httpProtocol": "https",
           "wsProtocol": "wss",
           "drugSearchLimit": 20,
-          "jwtSecret": "as;ledasoi43poiap[iohakj23-9*_()"
+          "jwtSecret": "as;ledasoi43poiap[iohakj23-9*_()",
+          "mediaServerUrl": "https://api.cloudinary.com/v1_1/munch-development-llc/upload",
+          "uploadPreset": "uqyed4ti"
         },
         "staging": {
           "apiServerUrl": "rxrunr-api-staging.herokuapp.com",
           "httpProtocol": "https",
           "wsProtocol": "wss",
           "drugSearchLimit": 20,
-          "jwtSecret": "as;ledasoi43poiapa[pio2j243[oin[d-9*_()"
+          "jwtSecret": "as;ledasoi43poiapa[pio2j243[oin[d-9*_()",
+          "mediaServerUrl": "https://api.cloudinary.com/v1_1/munch-development-llc/upload",
+          "uploadPreset": "uqyed4ti"
         },
         "development": {
-          "apiServerUrl": "192.168.0.9:4001",
+          "apiServerUrlProd": "rxrunr-api.herokuapp.com",
+          "apiServerUrl": "192.168.0.3:4001",
           "httpProtocol": "http",
           "wsProtocol": "ws",
           "drugSearchLimit": 20,
-          "jwtSecret": "test"
+          "jwtSecret": "test",
+          "mediaServerUrl": "https://api.cloudinary.com/v1_1/munch-development-llc/upload",
+          "uploadPreset": "uqyed4ti"
         }
       }
     },

@@ -3,6 +3,7 @@ import DropdownAlert, { DropdownAlertType } from 'react-native-dropdownalert';
 export class AlertHelper {
   static dropDown: DropdownAlert | null;
   static onClose: any;
+  static onTap: any;
 
   static setDropDown(dropDown: DropdownAlert | null) {
     this.dropDown = dropDown;
@@ -14,6 +15,9 @@ export class AlertHelper {
     }
   }
 
+  static setOnTap(onTap: any) {
+    this.onTap = onTap;
+  }
   static setOnClose(onClose: any) {
     this.onClose = onClose;
   }
@@ -22,6 +26,14 @@ export class AlertHelper {
     if (typeof this.onClose === 'function') {
       this.onClose();
       this.onClose = undefined;
+      this.onTap = undefined;
+    }
+  }
+
+  static invokeOnTap() {
+    if (typeof this.onTap === 'function') {
+      this.onTap();
+      this.onTap = undefined;
     }
   }
 }

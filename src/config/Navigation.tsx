@@ -18,9 +18,11 @@ import { AlertHelper } from '../utils/alert';
 import { NewRx } from '../screens/NewRx';
 import { ShoppingCart } from '../screens/ShoppingCart';
 import { Profile } from '../screens/Profile';
-import { useSubscription } from '@apollo/react-hooks';
-import { CART_MODIFIED_SUBSCRIPTION } from '../graphql/queries/customer/customer';
 import { Modal } from '../screens/Modal';
+import { ScanRx } from '../screens/ScanRx';
+import { ScanRxBottle } from '../screens/ScanRxBottle';
+import { ManualRxEntry } from '../screens/ManualRxEntry';
+import { INewRx } from '../screens/NewRx/NewRx.screen';
 
 const AuthStack = createStackNavigator();
 const Tabs = createMaterialBottomTabNavigator();
@@ -37,6 +39,9 @@ const RxStackScreen = () => (
   >
     <RxStack.Screen name="RxHistory" component={RxHistory} />
     <RxStack.Screen name="NewRx" component={NewRx} />
+    {/*<RxStack.Screen name="ScanRx" component={ScanRx} />
+     <RxStack.Screen name="ScanRxBottle" component={ScanRxBottle} />
+    <RxStack.Screen name="ManualRxEntry" component={ManualRxEntry} /> */}
     <RxStack.Screen name="ShoppingCart" component={ShoppingCart} />
     <RxStack.Screen name="SelectPharmacy" component={SelectPharmacy} />
     <RxStack.Screen
@@ -172,10 +177,12 @@ const RootStackScreen = (props: any) => {
 
 export default () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isRequesting, setIsRequesting] = useState(true);
   const [userToken, setUserToken] = useState(null);
   const [customer, setCustomer] = useState(null);
   const [location, setLocation] = useState(null);
   const [pharmacy, setPharmacy] = useState(null);
+  const [newRx, setNewRx] = useState<INewRx[] | null>([]);
 
   // const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
   //   onSubscriptionData: ({ client, subscriptionData }) => {
@@ -202,6 +209,23 @@ export default () => {
     // console.log('updatePharmacy', pharmacy);
     setPharmacy(pharmacy);
     await AsyncStorage.setItem('pharmacy', JSON.stringify(pharmacy));
+  };
+  const addNewRx = async (rx: INewRx) => {
+    console.log('addNewRx', rx);
+    const updatedRx = [...newRx, rx];
+    setNewRx(updatedRx);
+    await AsyncStorage.setItem('newRx', JSON.stringify(updatedRx));
+  };
+  const removeNewRx = async (id: string) => {
+    // console.log('updatePharmacy', pharmacy);
+    const updatedRx = newRx.filter((r) => r.id !== id);
+    setNewRx(updatedRx);
+    await AsyncStorage.setItem('newRx', JSON.stringify(updatedRx));
+  };
+  const clearNewRx = async () => {
+    // console.log('updatePharmacy', pharmacy);
+    setNewRx([]);
+    await AsyncStorage.setItem('newRx', JSON.stringify(newRx));
   };
 
   const authContext = useMemo(() => {
@@ -265,8 +289,8 @@ export default () => {
     })();
   }, []);
 
-  if (isLoading) {
-    return <Splash />;
+  if (isLoading || isRequesting) {
+    return <Splash setRequesting={setIsRequesting} setLoading={setIsLoading} />;
   }
 
   return (
@@ -279,6 +303,10 @@ export default () => {
           setLocationContext: updateLocation,
           pharmacy: pharmacy,
           setPharmacyContext: updatePharmacy,
+          newRx,
+          addNewRxToContext: addNewRx,
+          removeNewRxFromContext: removeNewRx,
+          clearNewRxContext: clearNewRx,
         }}
       >
         <NavigationContainer>

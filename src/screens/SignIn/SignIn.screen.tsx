@@ -56,12 +56,12 @@ const SignIn: FC = () => {
         enabled
       >
         <View style={styles.header}>
-          <Animatable.Image
+          {/* <Animatable.Image
             animation="bounceIn"
             source={require('../../../assets/logo2.png')}
             style={styles.logo}
             resizeMode="stretch"
-          />
+          /> */}
         </View>
         <Animatable.View animation="fadeInUpBig" style={styles.footer}>
           <Formik

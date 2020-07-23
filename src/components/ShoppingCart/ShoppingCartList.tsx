@@ -23,7 +23,8 @@ import { AlertHelper } from '../../utils/alert';
 import { RoundedIconButton } from '../Buttons';
 import { HorizontalRule } from '../HorizontalRule';
 import { RxRunrContext } from '../../config/context';
-import { ConfirmDialog } from 'react-native-simple-dialogs';
+import { ConfirmDialog, ProgressDialog } from 'react-native-simple-dialogs';
+import { NoRecords } from '../NoRecords';
 
 export interface IShoppingCartListProps {
   customer: any;
@@ -35,8 +36,7 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
   pharmacy,
   location,
 }) => {
-  const [rxHistory, setShoppingCartList] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [currentItem, setCurrentItem] = useState(null);
   const { setCustomerContext } = useContext(RxRunrContext);
@@ -49,7 +49,7 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
 
   const renderItem = ({ item }: { item: any }) => {
     return (
-      <View style={styles.item}>
+      <View key={item.id} style={styles.item}>
         <View style={styles.itemContainer}>
           <View style={[styles.leftItemContent]}>
             <Text style={[styles.text, styles.drugText]}>
@@ -89,6 +89,12 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
 
   return (
     <Fragment>
+      <ProgressDialog
+        visible={isLoading}
+        message="Loading..."
+        activityIndicatorColor={colors.blue.dark}
+        activityIndicatorSize="large"
+      />
       <ConfirmDialog
         title="Delete Rx"
         message="Are you sure you want to delete?"
@@ -113,6 +119,8 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
         positiveButton={{
           title: 'YES',
           onPress: async () => {
+            setIsLoading(true);
+            setShowConfirm(false);
             const result = await removeRxFromCart({
               variables: {
                 input: { rxId: currentItem.id, customerId: customer.id },
@@ -122,22 +130,20 @@ const ShoppingCartList: FC<IShoppingCartListProps> = ({
           },
         }}
       />
-
-      <View style={styles.flatList}>
-        <FlatList
-          data={customer.cart}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => item.id}
-          ItemSeparatorComponent={() => (
-            <HorizontalRule styles={{ marginHorizontal: 10 }} />
-          )}
-          ListEmptyComponent={() => (
-            <View>
-              <Text>No Records Found</Text>
-            </View>
-          )}
-        />
-      </View>
+      {!isLoading && customer.cart.length === 0 ? (
+        <NoRecords text="No Items Found" iconName="cart" />
+      ) : (
+        <View style={styles.flatList}>
+          <FlatList
+            data={customer.cart}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => item.id}
+            ItemSeparatorComponent={() => (
+              <HorizontalRule styles={{ marginHorizontal: 10 }} />
+            )}
+          />
+        </View>
+      )}
     </Fragment>
   );
 };

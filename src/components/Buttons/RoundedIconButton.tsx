@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, Fragment } from 'react';
 import {
   Text,
   View,
@@ -18,6 +18,8 @@ export interface IRoundedIconButtonProps {
   borderWidth?: number | undefined;
   iconName: string | undefined;
   iconColor?: string | undefined;
+  text?: string | undefined;
+  disabled?: boolean | undefined;
 }
 export const RoundedIconButton: FC<IRoundedIconButtonProps> = ({
   onPress,
@@ -28,27 +30,37 @@ export const RoundedIconButton: FC<IRoundedIconButtonProps> = ({
   iconName,
   iconColor,
   borderWidth,
+  text,
+  disabled,
 }) => {
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      style={{
-        width: size || 60,
-        height: size || 60,
-        backgroundColor: backgroundColor || colors.white.normal,
-        borderRadius: size ? size / 2 : 30,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderColor: borderColor || colors.blue.light,
-        borderWidth: borderWidth || 2,
-      }}
-    >
-      <FontAwesome5
-        name={iconName}
-        size={iconSize}
-        color={iconColor || colors.blue.light}
-      />
-    </TouchableOpacity>
+    <View style={{ flex: 1, alignItems: 'center' }}>
+      <TouchableOpacity
+        disabled={disabled}
+        onPress={onPress}
+        style={{
+          width: size || 60,
+          height: size || 60,
+          backgroundColor: backgroundColor || colors.white.normal,
+          borderRadius: size ? size / 2 : 30,
+          justifyContent: 'center',
+          alignItems: 'center',
+          borderColor: borderColor || colors.blue.light,
+          borderWidth: borderWidth || 2,
+        }}
+      >
+        <FontAwesome5
+          name={iconName}
+          size={iconSize}
+          color={iconColor || colors.blue.light}
+        />
+      </TouchableOpacity>
+      {text ? (
+        <Text style={{ fontSize: 8, fontWeight: 'bold', marginTop: 5 }}>
+          {text}
+        </Text>
+      ) : null}
+    </View>
   );
 };
 

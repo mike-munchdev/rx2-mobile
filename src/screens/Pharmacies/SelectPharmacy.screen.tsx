@@ -32,6 +32,7 @@ import PharmacyOpen from '../../components/Formatting/PharmacyOpen';
 import { PharmacyAddress, PharmacyHours } from '../../components/Formatting';
 import { Card } from 'react-native-elements';
 import { ProgressDialog } from 'react-native-simple-dialogs';
+import { NoRecords } from '../../components/NoRecords';
 
 const SelectPharmacy = () => {
   const [pharmacies, setPharmacies] = useState([]);
@@ -97,7 +98,7 @@ const SelectPharmacy = () => {
     }
   );
 
-  const renderItem = ({ item }: { item: any }) => {
+  const renderItem = ({ item  }: { item: any }) => {
     return (
       <Card>
         <View style={styles.itemContainer}>
@@ -160,18 +161,17 @@ const SelectPharmacy = () => {
         activityIndicatorColor={colors.blue.dark}
         activityIndicatorSize="large"
       />
-      <View style={styles.flatList}>
-        <FlatList
-          data={pharmacies}
-          renderItem={renderItem}
-          keyExtractor={(item, index) => item.id}
-          ListEmptyComponent={() => (
-            <View>
-              <Text>No Records Found</Text>
-            </View>
-          )}
-        />
-      </View>
+      {!isLoading && pharmacies.length === 0 ? (
+        <NoRecords text="No Pharmacies Found" />
+      ) : (
+        <View style={styles.flatList}>
+          <FlatList
+            data={pharmacies}
+            renderItem={renderItem}
+            keyExtractor={(item, index) => item.id}
+          />
+        </View>
+      )}
     </Fragment>
   );
 };
