@@ -11,7 +11,7 @@ import { AlertHelper } from '../../utils/alert';
 
 const ShoppingCartIcon: FC = () => {
   const { customer } = useContext(RxRunrContext);
-
+  console.log('ShoppingCartIcon:customer', customer);
   if (customer.cart) {
     return (
       <IconWithBadge

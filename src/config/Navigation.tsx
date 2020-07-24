@@ -23,6 +23,13 @@ import { ScanRx } from '../screens/ScanRx';
 import { ScanRxBottle } from '../screens/ScanRxBottle';
 import { ManualRxEntry } from '../screens/ManualRxEntry';
 import { INewRx } from '../screens/NewRx/NewRx.screen';
+import { registerForPushNotificationsAsync } from '../utils/notifications';
+import {
+  ADD_PUSH_TOKEN,
+  addPushTokenError,
+  addPushTokenCompleted,
+} from '../graphql/queries/customer/customer';
+import { useMutation } from '@apollo/react-hooks';
 
 const AuthStack = createStackNavigator();
 const Tabs = createMaterialBottomTabNavigator();
@@ -183,6 +190,15 @@ export default () => {
   const [location, setLocation] = useState(null);
   const [pharmacy, setPharmacy] = useState(null);
   const [newRx, setNewRx] = useState<INewRx[] | null>([]);
+  const [addPushToken] = useMutation(ADD_PUSH_TOKEN, {
+    fetchPolicy: 'no-cache',
+    onError: addPushTokenError(setIsLoading, setIsRequesting),
+    onCompleted: addPushTokenCompleted(
+      setIsLoading,
+      setCustomer,
+      setIsRequesting
+    ),
+  });
 
   // const { loading, error } = useSubscription(CART_MODIFIED_SUBSCRIPTION, {
   //   onSubscriptionData: ({ client, subscriptionData }) => {
@@ -272,25 +288,43 @@ export default () => {
   useEffect(() => {
     (async () => {
       const token = await AsyncStorage.getItem('token');
-      const customer = await AsyncStorage.getItem('customer');
-      const pharmacy = await AsyncStorage.getItem('pharmacy');
+      const customerJson = await AsyncStorage.getItem('customer');
+      const pharmacyJson = await AsyncStorage.getItem('pharmacy');
       if (token) {
         setUserToken(token);
       }
-      if (customer) {
-        setCustomer(JSON.parse(customer));
+      if (customerJson) {
+        setCustomer(JSON.parse(customerJson || ''));
       }
-      if (pharmacy) {
-        setPharmacy(JSON.parse(pharmacy));
+      if (pharmacyJson) {
+        setPharmacy(JSON.parse(pharmacyJson || ''));
       }
-      setTimeout(() => {
-        setIsLoading(false);
-      }, 1000);
     })();
   }, []);
 
-  if (isLoading || isRequesting) {
-    return <Splash setRequesting={setIsRequesting} setLoading={setIsLoading} />;
+  useEffect(() => {
+    (async () => {
+      console.log('customer', customer);
+      if (customer) {
+        const pushToken = await registerForPushNotificationsAsync();
+
+        console.log('token', pushToken);
+        console.log('Navigation:customer', customer);
+
+        await addPushToken({
+          variables: {
+            input: {
+              customerId: customer.id,
+              pushToken,
+            },
+          },
+        });
+      }
+    })();
+  }, [customer]);
+
+  if (isLoading && isRequesting) {
+    return <Splash />;
   }
 
   return (

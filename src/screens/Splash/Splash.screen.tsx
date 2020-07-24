@@ -28,60 +28,55 @@ import { RxRunrContext } from '../../config/context';
 
 import { registerForPushNotificationsAsync } from '../../utils/notifications';
 import { Notifications } from 'expo';
+import AsyncStorage from '@react-native-community/async-storage';
 
 export interface ISplashProps {
-  setLoading: Function;
-  setRequesting: Function;
+  setLoading?: Function;
+  setRequesting?: Function;
+  setCustomer?: Function;
+  customer?: any;
 }
-const Splash: FC<ISplashProps> = ({ setLoading, setRequesting }) => {
-  const { customer, setCustomerContext } = useContext(RxRunrContext);
-
-  const [addPushToken] = useMutation(ADD_PUSH_TOKEN, {
-    fetchPolicy: 'no-cache',
-    onError: addPushTokenError(setLoading),
-    onCompleted: addPushTokenCompleted(setLoading, setCustomerContext),
-  });
-
-  useEffect(() => {
-    (async () => {
-      const permissions = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-      console.log('status', permissions);
-      if (permissions.status !== 'granted') {
-        if (permissions.canAskAgain) {
-          const { status } = await Permissions.askAsync(
-            Permissions.NOTIFICATIONS
-          );
-          console.log('status2', status);
-          if (status !== 'granted') {
-            AlertHelper.setOnTap(() => {
-              Linking.openURL('app-settings:');
-            });
-            AlertHelper.setOnClose(() => {
-              setRequesting(false);
-            });
-            AlertHelper.show(
-              'info',
-              'Notifications Not Enabled',
-              'Click here to enable Notifications in Settings'
-            );
-          } else {
-            const response = await Notifications.getExpoPushTokenAsync();
-            await addPushToken({
-              variables: {
-                input: {
-                  customerId: customer ? customer.id : '',
-                  pushToken: response.data,
-                },
-              },
-            });
-          }
-        }
-      } else {
-        setRequesting(false);
-      }
-    })();
-    return () => {};
-  }, []);
+const Splash: FC<ISplashProps> = () => {
+  // useEffect(() => {
+  //   (async () => {
+  //     const permissions = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+  //     console.log('status', permissions);
+  //     if (permissions.status !== 'granted') {
+  //       if (permissions.canAskAgain) {
+  //         const { status } = await Permissions.askAsync(
+  //           Permissions.NOTIFICATIONS
+  //         );
+  //         console.log('status2', status);
+  //         if (status !== 'granted') {
+  //           AlertHelper.setOnTap(() => {
+  //             Linking.openURL('app-settings:');
+  //           });
+  //           AlertHelper.setOnClose(() => {
+  //             setRequesting(false);
+  //           });
+  //           AlertHelper.show(
+  //             'info',
+  //             'Notifications Not Enabled',
+  //             'Click here to enable Notifications in Settings'
+  //           );
+  //         } else {
+  //           const response = await Notifications.getExpoPushTokenAsync();
+  //           await addPushToken({
+  //             variables: {
+  //               input: {
+  //                 customerId: customer ? customer.id : '',
+  //                 pushToken: response.data,
+  //               },
+  //             },
+  //           });
+  //         }
+  //       }
+  //     } else {
+  //       setRequesting(false);
+  //     }
+  //   })();
+  //   return () => {};
+  // }, []);
 
   return (
     <View style={styles.container}>

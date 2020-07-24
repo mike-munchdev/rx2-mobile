@@ -41,6 +41,7 @@ export const customersStructure = `{
     stripeId
     googleId
     facebookId
+    pushTokens
     createdAt
     settings {
       searchDistance
@@ -431,27 +432,34 @@ export const addNewRxsToQueueCompleted = (
   }
 };
 
-export const addPushTokenError = (setLoading: Function) => (e: ApolloError) => {
+export const addPushTokenError = (
+  setLoading: Function,
+  setRequesting: Function
+) => (e: ApolloError) => {
   setLoading(false);
-  AlertHelper.show(
-    'error',
-    'Error',
-    'An error occurred adding Rx to cart. Please try again.'
-  );
+  setRequesting(false);
+  console.log('e', e);
+  // AlertHelper.show(
+  //   'error',
+  //   'Error',
+  //   'An error occurred adding push notification information. Please try again.'
+  // );
 };
 
 export const addPushTokenCompleted = (
   setLoading: Function,
-  setCustomer: Function
+  setCustomer: Function,
+  setRequesting: Function
 ) => async ({ addPushToken }) => {
   const { ok, customer, error } = addPushToken;
 
+  setRequesting(false);
   if (ok) {
     setLoading(false);
     if (!customer) {
-      AlertHelper.show('error', 'Error', 'Error retrieving information.');
+      // AlertHelper.show('error', 'Error', 'Error retrieving information.');
     } else {
-      AlertHelper.show('success', 'Success', 'Information saved.');
+      // AlertHelper.show('success', 'Success', 'Information saved.');
       setCustomer(customer);
     }
   } else {
