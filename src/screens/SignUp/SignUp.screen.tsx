@@ -61,9 +61,9 @@ const SignUp: FC = () => {
             }}
             validationSchema={signupSchema}
             onSubmit={async (values, { setSubmitting }) => {
-              const { email, password } = values;
-              const result = await customerSignup({
-                variables: { input: { email, password } },
+              const { email, password, firstName, lastName } = values;
+              await customerSignup({
+                variables: { input: { email, password, firstName, lastName } },
               });
             }}
           >
